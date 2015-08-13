@@ -1,41 +1,49 @@
 package com.ekvilan.mvplayer.view;
 
+import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ekvilan.mvplayer.R;
+import com.ekvilan.mvplayer.controllers.MainController;
+import com.ekvilan.mvplayer.utils.StorageUtils;
+
+import java.io.File;
+import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
+    private MainController mainController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
+
+        mainController = new MainController();
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        List<StorageUtils.StorageInfo> storageList = mainController.getStorageList();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        List<File> sdCardVideo = null;
+        List<File> internalStorageVideo = mainController.getVideoFiles(storageList.get(0).getPath());
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(storageList.size() > 1) {
+            sdCardVideo = mainController.getVideoFiles(storageList.subList(1, storageList.size()));
         }
 
-        return super.onOptionsItemSelected(item);
+        for(File f : internalStorageVideo) {
+            Log.d("my", f.getName());
+        }
+
+        Log.d("my", "//////////////////////////////////////////////");
+        for(File f : sdCardVideo) {
+            Log.d("my", f.getName());
+        }
     }
 }
