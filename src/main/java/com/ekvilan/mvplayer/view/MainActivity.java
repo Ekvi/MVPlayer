@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
+import com.ekvilan.mvplayer.models.VideoInfo;
+import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.utils.StorageUtils;
 
 import java.io.File;
@@ -30,20 +32,31 @@ public class MainActivity extends Activity {
 
         List<StorageUtils.StorageInfo> storageList = mainController.getStorageList();
 
-        List<File> sdCardVideo = null;
-        List<File> internalStorageVideo = mainController.getVideoFiles(storageList.get(0).getPath());
+        List<FileProvider.VideoFolder> sdCardVideo = null;
+        List<FileProvider.VideoFolder> internalStorageVideo = mainController.getVideoFiles(storageList.get(0).getPath());
 
         if(storageList.size() > 1) {
             sdCardVideo = mainController.getVideoFiles(storageList.subList(1, storageList.size()));
         }
 
-        for(File f : internalStorageVideo) {
-            Log.d("my", f.getName());
+        Log.d("my", "first");
+        for(FileProvider.VideoFolder f : internalStorageVideo) {
+            Log.d("my", f.getFolderName());
+            List<String> str = f.getVideoLinks();
+            for(String s : str) {
+                Log.d("my", s);
+            }
         }
 
-        Log.d("my", "//////////////////////////////////////////////");
-        for(File f : sdCardVideo) {
-            Log.d("my", f.getName());
+        if(sdCardVideo != null) {
+            Log.d("my", "second");
+            for (FileProvider.VideoFolder f : sdCardVideo) {
+                Log.d("my", f.getFolderName());
+                List<String> str = f.getVideoLinks();
+                for (String s : str) {
+                    Log.d("my", s);
+                }
+            }
         }
     }
 }
