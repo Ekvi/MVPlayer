@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">MVPlayer</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="sliderInternalMemory">Internal memory</string>
+    <string name="sliderSdCard">SDCard</string>
+    <string name="sliderRecently">Recently</string>
+    <string name="filesCount">video</string>
 </resources>

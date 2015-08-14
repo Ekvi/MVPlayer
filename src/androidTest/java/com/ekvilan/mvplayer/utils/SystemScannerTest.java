@@ -2,7 +2,7 @@ package com.ekvilan.mvplayer.utils;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.ekvilan.mvplayer.view.MainActivity;
+import com.ekvilan.mvplayer.view.activities.MainActivity;
 
 
 import java.io.File;

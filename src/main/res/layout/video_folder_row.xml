@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/ivFolderIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/video_folder"/>
+
+    <TextView
+        android:id="@+id/tvFolderName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivFolderIcon"
+        android:layout_toEndOf="@+id/ivFolderIcon"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tvFilesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivFolderIcon"
+        android:layout_toEndOf="@+id/ivFolderIcon"
+        android:layout_below="@+id/tvFolderName"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>
