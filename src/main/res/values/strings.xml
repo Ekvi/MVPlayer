@@ -5,4 +5,5 @@
     <string name="sliderSdCard">SDCard</string>
     <string name="sliderRecently">Recently</string>
     <string name="filesCount">video</string>
+    <string name="noVideoMessage">There is no video</string>
 </resources>

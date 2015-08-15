@@ -14,6 +14,8 @@ import com.ekvilan.mvplayer.utils.FileProvider;
 import java.util.List;
 
 public class VideoFoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int EMPTY_VIEW = 10;
+
     private Context context;
     private LayoutInflater inflater;
     private List<FileProvider.VideoFolder> folders;
@@ -26,6 +28,10 @@ public class VideoFoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == EMPTY_VIEW) {
+            return new EmptyViewHolder(inflater.inflate(R.layout.empty_row, parent, false));
+        }
+
         return new VideoFolderViewHolder(
                 inflater.inflate(R.layout.video_folder_row, parent, false));
     }
@@ -37,9 +43,9 @@ public class VideoFoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             String videoCount = folders.get(position).getVideoLinks().size()
                     + " " + context.getResources().getString(R.string.filesCount);
 
-            VideoFolderViewHolder adsHolder = (VideoFolderViewHolder) viewHolder;
-            adsHolder.folderName.setText(folderName[folderName.length - 1]);
-            adsHolder.filesCount.setText(videoCount);
+            VideoFolderViewHolder holder = (VideoFolderViewHolder) viewHolder;
+            holder.folderName.setText(folderName[folderName.length - 1]);
+            holder.filesCount.setText(videoCount);
         }
     }
 
@@ -50,6 +56,9 @@ public class VideoFoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
+        if (folders.size() == 0) {
+            return EMPTY_VIEW;
+        }
         return super.getItemViewType(position);
     }
 
@@ -61,6 +70,12 @@ public class VideoFoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             folderName = (TextView) itemView.findViewById(R.id.tvFolderName);
             filesCount = (TextView) itemView.findViewById(R.id.tvFilesCount);
+        }
+    }
+
+    public class EmptyViewHolder extends RecyclerView.ViewHolder {
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }
