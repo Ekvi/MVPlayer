@@ -2,11 +2,9 @@ package com.ekvilan.mvplayer.view.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,18 +12,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
-import com.ekvilan.mvplayer.utils.FileProvider;
+import com.ekvilan.mvplayer.controllers.VideoController;
 
+import java.io.File;
 import java.util.List;
 
 public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
+    private VideoController videoController;
     private LayoutInflater inflater;
     private List<String> videoLinks;
 
     public VideoFileAdapter(Context context, List<String> videoLinks) {
         inflater = LayoutInflater.from(context);
-        this.context = context;
+        this.videoController = new VideoController();
         this.videoLinks = videoLinks;
     }
 
@@ -47,7 +46,19 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     MediaStore.Images.Thumbnails.MINI_KIND);
             holder.imageView.setImageBitmap(thumbnail);
             holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            holder.fileSize.setText(calculateFileSize(videoLinks.get(position)));
+            holder.videoLength.setText(videoController.calculateDuration(videoLinks.get(position)));
         }
+    }
+
+    private String calculateFileSize(String uri) {
+        long byteLength = new File(uri).length();
+        long kByte = byteLength / 1024;
+        long mByte = kByte / 1024;
+        long divider = kByte % 1024;
+
+        return String.format("%.1f", Double.parseDouble(mByte + "." + divider)) + "M";
     }
 
     @Override
