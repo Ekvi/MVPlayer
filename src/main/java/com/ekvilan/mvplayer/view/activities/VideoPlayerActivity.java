@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.VideoController;
+import com.ekvilan.mvplayer.utils.DurationConverter;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,12 +34,17 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private ImageView btnNext;
     private ProgressBar progressBar;
     private TextView tvName;
+    private TextView tvTimer;
+    private TextView tvDuration;
 
     private VideoController videoController;
+    private DurationConverter durationConverter;
     private Handler handler = new Handler();
 
     private String uri;
     private boolean isShow = false;
+    private long counter;
+    private long duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         setContentView(R.layout.activity_video_player);
 
         videoController = new VideoController();
+        durationConverter = new DurationConverter();
 
         uri = getIntent().getStringExtra(getResources().getString(R.string.uri));
 
@@ -62,6 +69,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         btnNext = (ImageView) findViewById(R.id.next);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         tvName = (TextView) findViewById(R.id.video_name);
+        tvTimer = (TextView) findViewById(R.id.tvTimer);
+        tvDuration = (TextView) findViewById(R.id.tvDuration);
     }
 
     private void initVideoHolder() {
@@ -104,10 +113,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 Drawable drawable;
                 if(videoController.isPlaying()) {
                     videoController.pause();
-                    drawable = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_media_play, null);
+                    drawable = ResourcesCompat
+                            .getDrawable(getResources(), android.R.drawable.ic_media_play, null);
                 } else {
                     videoController.play();
-                    drawable = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_media_pause, null);
+                    drawable = ResourcesCompat
+                            .getDrawable(getResources(), android.R.drawable.ic_media_pause, null);
                     startTimer();
                 }
                 setImage(btnPlay, drawable);
@@ -125,8 +136,12 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoController.createPlayer(holder, uri);
         updateProgressBar();
 
-        setImage(btnPlay, ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_media_pause, null));
+        duration = videoController.getDuration();
+
+        setImage(btnPlay, ResourcesCompat
+                .getDrawable(getResources(), android.R.drawable.ic_media_pause, null));
         setText(tvName, getName());
+        setText(tvDuration, durationConverter.convertDuration(duration));
     }
 
     @Override
@@ -166,12 +181,27 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     public void run() {
                         handler.post(progressUpdater);
                     }}, 200, 200, TimeUnit.MILLISECONDS);
+        scheduledExecutorService.scheduleWithFixedDelay(
+                new Runnable(){
+                    @Override
+                    public void run() {
+                        handler.post(timerUpdater);
+                    }}, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
     private Runnable progressUpdater = new Runnable() {
         public void run() {
             progressBar.setMax(videoController.getDuration());
             progressBar.setProgress(videoController.getCurrentPosition());
+        }
+    };
+
+    private Runnable timerUpdater = new Runnable() {
+        public void run() {
+            if (counter < duration - 1000) {
+                counter += 1000;
+            }
+            setText(tvTimer, durationConverter.convertDuration(counter));
         }
     };
 

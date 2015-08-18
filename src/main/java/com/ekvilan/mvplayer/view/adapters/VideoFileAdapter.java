@@ -2,6 +2,7 @@ package com.ekvilan.mvplayer.view.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
@@ -12,19 +13,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
-import com.ekvilan.mvplayer.controllers.VideoController;
+import com.ekvilan.mvplayer.utils.DurationConverter;
 
 import java.io.File;
 import java.util.List;
 
 public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private VideoController videoController;
+    private DurationConverter durationConverter;
     private LayoutInflater inflater;
     private List<String> videoLinks;
 
     public VideoFileAdapter(Context context, List<String> videoLinks) {
         inflater = LayoutInflater.from(context);
-        this.videoController = new VideoController();
+        durationConverter = new DurationConverter();
         this.videoLinks = videoLinks;
     }
 
@@ -48,7 +49,7 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             holder.fileSize.setText(calculateFileSize(videoLinks.get(position)));
-            holder.videoLength.setText(videoController.calculateDuration(videoLinks.get(position)));
+            holder.videoLength.setText(durationConverter.convertDuration(getDuration(position)));
         }
     }
 
@@ -59,6 +60,14 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         long divider = kByte % 1024;
 
         return String.format("%.1f", Double.parseDouble(mByte + "." + divider)) + "M";
+    }
+
+    private long getDuration(int position) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoLinks.get(position));
+        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+        return Long.parseLong(time);
     }
 
     @Override

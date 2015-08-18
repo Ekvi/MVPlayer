@@ -4,8 +4,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.SurfaceHolder;
 
-import java.io.IOException;
-
 
 public class VideoController implements MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
@@ -60,31 +58,5 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
     public void finish() {
         mediaPlayer.release();
         mediaPlayer = null;
-    }
-
-    public String calculateDuration(String uri) {
-        try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(uri);
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int duration = mediaPlayer.getDuration();
-        duration /= 1000;
-        int minutes = duration / 60;
-        int seconds = duration % 60;
-        int hours = 0;
-        if(minutes >= 60) {
-            hours = minutes / 60;
-            minutes %= 60;
-        }
-
-        String strHours = hours > 0 ? hours + ":" : "";
-        String strMinutes = minutes < 10 ? "0" + minutes + ":" : minutes + ":";
-        String strSeconds = seconds < 10 ? "0" + seconds : seconds + "";
-
-        return strHours + strMinutes + strSeconds;
     }
 }
