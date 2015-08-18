@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.activities.VideoPlayerActivity"
+            android:label="@string/title_activity_video_player"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+        </activity>
     </application>
 
 </manifest>

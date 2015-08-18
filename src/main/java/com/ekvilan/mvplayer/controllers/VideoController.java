@@ -10,13 +10,9 @@ import java.io.IOException;
 public class VideoController implements MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
 
-    public VideoController() {
-        mediaPlayer = new MediaPlayer();
-    }
-
     public void createPlayer(SurfaceHolder surfaceHolder, String uri) {
         try {
-            //mediaPlayer = new MediaPlayer();
+            mediaPlayer = new MediaPlayer();
             mediaPlayer.setDisplay(surfaceHolder);
             mediaPlayer.setDataSource(uri);
             mediaPlayer.prepare();
