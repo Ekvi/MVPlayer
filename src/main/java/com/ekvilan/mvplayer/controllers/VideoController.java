@@ -59,4 +59,8 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
         mediaPlayer.release();
         mediaPlayer = null;
     }
+
+    public void setCurrentPosition(int currentPosition) {
+        mediaPlayer.seekTo(currentPosition);
+    }
 }

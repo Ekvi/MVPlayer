@@ -52,21 +52,21 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
                     android:textColor="@color/white" />
-                <ProgressBar
+                <SeekBar
                     android:id="@+id/progressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="5dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="7dp"
-                    android:background="@color/progressBar" />
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dip"
+                    android:layout_height="32dp"
+                    android:layout_weight="1" />
                 <TextView
                     android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/white"/>
             </LinearLayout>

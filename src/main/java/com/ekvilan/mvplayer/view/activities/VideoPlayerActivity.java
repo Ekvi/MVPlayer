@@ -9,8 +9,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
@@ -32,7 +32,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private ImageView btnPlay;
     private ImageView btnPrev;
     private ImageView btnNext;
-    private ProgressBar progressBar;
+    private SeekBar progressBar;
     private TextView tvName;
     private TextView tvTimer;
     private TextView tvDuration;
@@ -43,8 +43,6 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     private String uri;
     private boolean isShow = false;
-    private long counter;
-    private long duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +65,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         btnPlay = (ImageView) findViewById(R.id.play);
         btnPrev = (ImageView) findViewById(R.id.prev);
         btnNext = (ImageView) findViewById(R.id.next);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (SeekBar) findViewById(R.id.progressBar);
         tvName = (TextView) findViewById(R.id.video_name);
         tvTimer = (TextView) findViewById(R.id.tvTimer);
         tvDuration = (TextView) findViewById(R.id.tvDuration);
@@ -124,6 +122,24 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 setImage(btnPlay, drawable);
             }
         });
+
+        progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(timerUpdater);
+                handler.removeCallbacks(progressUpdater);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                videoController.setCurrentPosition(seekBar.getProgress());
+                updateProgressBar();
+            }
+        });
     }
 
     @Override
@@ -136,12 +152,10 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoController.createPlayer(holder, uri);
         updateProgressBar();
 
-        duration = videoController.getDuration();
-
         setImage(btnPlay, ResourcesCompat
                 .getDrawable(getResources(), android.R.drawable.ic_media_pause, null));
         setText(tvName, getName());
-        setText(tvDuration, durationConverter.convertDuration(duration));
+        setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
     }
 
     @Override
@@ -181,6 +195,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     public void run() {
                         handler.post(progressUpdater);
                     }}, 200, 200, TimeUnit.MILLISECONDS);
+
         scheduledExecutorService.scheduleWithFixedDelay(
                 new Runnable(){
                     @Override
@@ -198,10 +213,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     private Runnable timerUpdater = new Runnable() {
         public void run() {
-            if (counter < duration - 1000) {
-                counter += 1000;
-            }
-            setText(tvTimer, durationConverter.convertDuration(counter));
+            setText(tvTimer, durationConverter.convertDuration(videoController.getCurrentPosition()));
         }
     };
 
