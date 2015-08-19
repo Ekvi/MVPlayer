@@ -17,6 +17,7 @@ import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.VideoController;
 import com.ekvilan.mvplayer.utils.DurationConverter;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private DurationConverter durationConverter;
     private Handler handler = new Handler();
 
-    private String uri;
+    private int position;
+    private List<String> videoLinks;
     private boolean isShow = false;
 
     @Override
@@ -52,7 +54,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoController = new VideoController();
         durationConverter = new DurationConverter();
 
-        uri = getIntent().getStringExtra(getResources().getString(R.string.uri));
+        position = getIntent().getIntExtra("position", 0);
+        videoLinks = getIntent().getStringArrayListExtra("videoLinks");
 
         initView();
         initVideoHolder();
@@ -140,6 +143,26 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 updateProgressBar();
             }
         });
+
+        btnPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position > 0) {
+                    startNewVideo(--position);
+                    setText(tvName, getName());
+                }
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position < videoLinks.size() - 1) {
+                    startNewVideo(++position);
+                    setText(tvName, getName());
+                }
+            }
+        });
     }
 
     @Override
@@ -149,7 +172,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        videoController.createPlayer(holder, uri);
+        videoController.createPlayer(holder, videoLinks.get(position));
         updateProgressBar();
 
         setImage(btnPlay, ResourcesCompat
@@ -226,7 +249,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
 
     private String getName() {
-        String[] split = uri.split("/");
+        String[] split = videoLinks.get(position).split("/");
         return split[split.length - 1];
+    }
+
+    private void startNewVideo(int position) {
+        videoController.finish();
+        videoController.createPlayer(surfaceHolder, videoLinks.get(position));
+        this.position = position;
     }
 }

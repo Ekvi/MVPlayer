@@ -16,6 +16,7 @@ import com.ekvilan.mvplayer.view.adapters.VideoFileAdapter;
 import com.ekvilan.mvplayer.view.adapters.VideoFoldersAdapter;
 import com.ekvilan.mvplayer.view.listeners.RecyclerItemClickListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         if(isFolderList) {
                             showVideoList(position);
                         } else {
-                            playVideo(videoLinks.get(position));
+                            playVideo(position, videoLinks);
                         }
                     }
                 })
@@ -180,9 +181,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void playVideo(String uri) {
+    private void playVideo(int position, List<String> videoLinks) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
-        intent.putExtra(getResources().getString(R.string.uri), uri);
+        intent.putExtra("position", position);
+        intent.putStringArrayListExtra("videoLinks", (ArrayList<String>)videoLinks);
         startActivity(intent);
     }
 
