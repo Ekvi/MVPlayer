@@ -14,10 +14,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
+import com.ekvilan.mvplayer.controllers.MainController;
 import com.ekvilan.mvplayer.controllers.VideoController;
 import com.ekvilan.mvplayer.utils.DurationConverter;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,11 +39,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private TextView tvDuration;
 
     private VideoController videoController;
+    private MainController mainController;
     private DurationConverter durationConverter;
     private Handler handler = new Handler();
 
     private int position;
-    private List<String> videoLinks;
     private boolean isShow = false;
 
     @Override
@@ -51,11 +51,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
+        mainController = MainController.getInstance();
         videoController = new VideoController();
         durationConverter = new DurationConverter();
 
         position = getIntent().getIntExtra("position", 0);
-        videoLinks = getIntent().getStringArrayListExtra("videoLinks");
 
         initView();
         initVideoHolder();
@@ -147,7 +147,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position > 0) {
+                if (position > 0) {
                     startNewVideo(--position);
                     setText(tvName, getName());
                 }
@@ -157,7 +157,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position < videoLinks.size() - 1) {
+                if(position < mainController.getCurrentVideoLinksSize() - 1) {
                     startNewVideo(++position);
                     setText(tvName, getName());
                 }
@@ -172,7 +172,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        videoController.createPlayer(holder, videoLinks.get(position));
+        videoController.createPlayer(holder, mainController.getVideo(position));
         updateProgressBar();
 
         setImage(btnPlay, ResourcesCompat
@@ -249,13 +249,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     }
 
     private String getName() {
-        String[] split = videoLinks.get(position).split("/");
+        String[] split = mainController.getVideo(position).split("/");
         return split[split.length - 1];
     }
 
     private void startNewVideo(int position) {
         videoController.finish();
-        videoController.createPlayer(surfaceHolder, videoLinks.get(position));
+        videoController.createPlayer(surfaceHolder, mainController.getVideo(position));
         this.position = position;
     }
 }

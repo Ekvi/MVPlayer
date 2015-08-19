@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,19 +15,13 @@ import com.ekvilan.mvplayer.view.adapters.VideoFileAdapter;
 import com.ekvilan.mvplayer.view.adapters.VideoFoldersAdapter;
 import com.ekvilan.mvplayer.view.listeners.RecyclerItemClickListener;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.ekvilan.mvplayer.utils.FileProvider.*;
-import static com.ekvilan.mvplayer.utils.StorageUtils.StorageInfo;
 
 
 public class MainActivity extends AppCompatActivity {
-    private List<StorageInfo> storageList;
-    private List<VideoFolder> sdCardVideo;
-    private List<VideoFolder> internalStorageVideo;
-
     private MainController mainController;
 
     private RecyclerView recyclerView;
@@ -37,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvSdCard;
     private TextView tvRecentVideo;
 
-    private List<String> videoLinks;
     private String storage;
     private boolean isFolderList;
 
@@ -46,38 +38,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mainController = new MainController();
+        mainController = MainController.getInstance();
 
-        storageList = mainController.getStorageList();
-        internalStorageVideo = mainController.getVideoFiles(storageList.get(0).getPath());
-        if(storageList.size() > 1) {
-            sdCardVideo = mainController.getVideoFiles(storageList.subList(1, storageList.size()));
+        if(mainController.getInternalStorageVideo() == null
+                                || mainController.getSdCardVideo() == null) {
+            mainController.cacheVideoLinks();
         }
-
-        /*Log.d("my", "first");
-        for(VideoFolder f : internalStorageVideo) {
-            Log.d("my", f.getFolderName());
-            List<String> str = f.getVideoLinks();
-            for(String s : str) {
-                Log.d("my", s);
-            }
-        }
-
-        if(sdCardVideo != null) {
-            Log.d("my", "second");
-            for (VideoFolder f : sdCardVideo) {
-                Log.d("my", f.getFolderName());
-                List<String> str = f.getVideoLinks();
-                for (String s : str) {
-                    Log.d("my", s);
-                }
-            }
-        }*/
 
         initView();
         clickInternalStorage();
         addListeners();
-
     }
 
     private void initView() {
@@ -100,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpVideoFileList(VideoFolder videoFolder) {
         isFolderList = false;
-        videoLinks = videoFolder.getVideoLinks();
+        mainController.cacheCurrentVideoLinks(videoFolder.getVideoLinks());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new VideoFileAdapter(this, videoFolder.getVideoLinks()));
     }
@@ -117,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                         if(isFolderList) {
                             showVideoList(position);
                         } else {
-                            playVideo(position, videoLinks);
+                            playVideo(position);
                         }
                     }
                 })
@@ -147,17 +117,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickInternalStorage() {
         storage = getResources().getString(R.string.sliderInternalMemory);
-        setUpFolderList(internalStorageVideo);
-        setMemoryPath(storageList.get(0).getPath());
+        setUpFolderList(mainController.getInternalStorageVideo());
+        setMemoryPath(mainController.getStoragePath(0));
         setStorageTextColor(getResources().getColor(R.color.white),
                 getResources().getColor(R.color.black), getResources().getColor(R.color.black));
     }
 
     private void clickSdCardStorage() {
         storage = getResources().getString(R.string.sliderSdCard);
-        setUpFolderList(sdCardVideo);
-        if(storageList.size() > 1) {
-            setMemoryPath(storageList.get(1).getPath());
+        setUpFolderList(mainController.getSdCardVideo());
+        if(mainController.getStorageListSize() > 1) {
+            setMemoryPath(mainController.getStoragePath(1));
         }
         setStorageTextColor(getResources().getColor(R.color.black),
                 getResources().getColor(R.color.white), getResources().getColor(R.color.black));
@@ -173,18 +143,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void showVideoList(int position) {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
-            setUpVideoFileList(internalStorageVideo.get(position));
+            setUpVideoFileList(mainController.getInternalVideoFolder(position));
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
-            setUpVideoFileList(sdCardVideo.get(position));
+            setUpVideoFileList(mainController.getSdCardFolder(position));
         } else {
             //todo set up recent video list
         }
     }
 
-    private void playVideo(int position, List<String> videoLinks) {
+    private void playVideo(int position) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
         intent.putExtra("position", position);
-        intent.putStringArrayListExtra("videoLinks", (ArrayList<String>)videoLinks);
         startActivity(intent);
     }
 
