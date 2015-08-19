@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String storage;
     private boolean isFolderList;
+    private int savedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         if(isFolderList) {
+                            savedPosition = position;
                             showVideoList(position);
                         } else {
                             playVideo(position);
@@ -118,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
     private void clickInternalStorage() {
         storage = getResources().getString(R.string.sliderInternalMemory);
         setUpFolderList(mainController.getInternalStorageVideo());
-        setMemoryPath(mainController.getStoragePath(0));
-        setStorageTextColor(getResources().getColor(R.color.white),
+        fillPathLayout(mainController.getStoragePath(0), getResources().getColor(R.color.white),
                 getResources().getColor(R.color.black), getResources().getColor(R.color.black));
     }
 
@@ -136,16 +137,23 @@ public class MainActivity extends AppCompatActivity {
     private void clickRecentVideo() {
         storage = getResources().getString(R.string.sliderRecently);
         //setUpFolderList(); todo set list of recent video
-        setMemoryPath(MainActivity.this.getResources().getString(R.string.memPathRecentVideo));
-        setStorageTextColor(getResources().getColor(R.color.black),
-                getResources().getColor(R.color.black), getResources().getColor(R.color.white));
+        fillPathLayout(MainActivity.this.getResources().getString(R.string.memPathRecentVideo),
+                getResources().getColor(R.color.black), getResources().getColor(R.color.black),
+                getResources().getColor(R.color.white));
     }
 
     private void showVideoList(int position) {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
             setUpVideoFileList(mainController.getInternalVideoFolder(position));
+            fillPathLayout(mainController.getStoragePath(0), getResources().getColor(R.color.white),
+                    getResources().getColor(R.color.black), getResources().getColor(R.color.black));
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
             setUpVideoFileList(mainController.getSdCardFolder(position));
+            if(mainController.getStorageListSize() > 1) {
+                setMemoryPath(mainController.getStoragePath(1));
+            }
+            setStorageTextColor(getResources().getColor(R.color.black),
+                    getResources().getColor(R.color.white), getResources().getColor(R.color.black));
         } else {
             //todo set up recent video list
         }
@@ -161,5 +169,37 @@ public class MainActivity extends AppCompatActivity {
         tvInternalStorage.setTextColor(intStorageColor);
         tvSdCard.setTextColor(sdCardColor);
         tvRecentVideo.setTextColor(recentVideoColor);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("isFolderList", isFolderList);
+        outState.putString("storage", storage);
+        outState.putInt("savedPosition", savedPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        isFolderList = savedInstanceState.getBoolean("isFolderList");
+        storage = savedInstanceState.getString("storage");
+        savedPosition = savedInstanceState.getInt("savedPosition");
+
+        if (isFolderList) {
+            if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
+                clickInternalStorage();
+            } else {
+                clickSdCardStorage();
+            }
+        } else {
+            showVideoList(savedPosition);
+        }
+    }
+
+    private void fillPathLayout(String path,
+                                int internalStorageColor, int sdCardColor, int recentVideoColor) {
+        setMemoryPath(path);
+        setStorageTextColor(internalStorageColor, sdCardColor, recentVideoColor);
     }
 }

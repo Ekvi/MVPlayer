@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
