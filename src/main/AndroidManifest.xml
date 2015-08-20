@@ -23,6 +23,13 @@
             android:label="@string/title_activity_video_player"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+
+
+            </intent-filter>
         </activity>
     </application>
 

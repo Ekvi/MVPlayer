@@ -2,6 +2,7 @@ package com.ekvilan.mvplayer.view.activities;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     private int position;
     private boolean isShow = false;
+    private String outsideAppLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         durationConverter = new DurationConverter();
 
         position = getIntent().getIntExtra("position", 0);
+
+        Uri uri = getIntent().getData();
+        if(uri != null) {
+            outsideAppLink = uri.getPath();
+        }
 
         initView();
         initVideoHolder();
@@ -151,7 +158,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             public void onClick(View v) {
                 if (position > 0) {
                     startNewVideo(--position);
-                    setText(tvName, getName());
+                    setText(tvName, getName(mainController.getVideo(position)));
                 }
                 startTimer();
             }
@@ -162,7 +169,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             public void onClick(View v) {
                 if(position < mainController.getCurrentVideoLinksSize() - 1) {
                     startNewVideo(++position);
-                    setText(tvName, getName());
+                    setText(tvName, getName(mainController.getVideo(position)));
                 }
                 startTimer();
             }
@@ -176,12 +183,17 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        videoController.createPlayer(holder, mainController.getVideo(position));
+        if(outsideAppLink != null) {
+            videoController.createPlayer(holder, outsideAppLink);
+            setText(tvName, getName(outsideAppLink));
+        } else {
+            videoController.createPlayer(holder, mainController.getVideo(position));
+            setText(tvName, getName(mainController.getVideo(position)));
+        }
         updateProgressBar();
 
         setImage(btnPlay, ResourcesCompat
                 .getDrawable(getResources(), android.R.drawable.ic_media_pause, null));
-        setText(tvName, getName());
         setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
     }
 
@@ -253,8 +265,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         textView.setText(value);
     }
 
-    private String getName() {
-        String[] split = mainController.getVideo(position).split("/");
+    private String getName(String path) {
+        String[] split = path.split("/");
         return split[split.length - 1];
     }
 
