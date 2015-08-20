@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -43,6 +42,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     private MainController mainController;
     private DurationConverter durationConverter;
     private Handler handler = new Handler();
+    private ScheduledExecutorService scheduledExecutorService;
 
     private int position;
     private boolean isShow = false;
@@ -141,7 +141,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 videoController.setCurrentPosition(seekBar.getProgress());
-                updateProgressBar();
+                progressBar.setProgress(seekBar.getProgress());
+                startTimer();
             }
         });
 
@@ -152,6 +153,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     startNewVideo(--position);
                     setText(tvName, getName());
                 }
+                startTimer();
             }
         });
 
@@ -162,6 +164,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                     startNewVideo(++position);
                     setText(tvName, getName());
                 }
+                startTimer();
             }
         });
     }
@@ -212,7 +215,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
     };
 
     private void updateProgressBar() {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
         scheduledExecutorService.scheduleWithFixedDelay(
                 new Runnable(){
                     @Override
@@ -258,5 +262,13 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoController.finish();
         videoController.createPlayer(surfaceHolder, mainController.getVideo(position));
         this.position = position;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        scheduledExecutorService.shutdown();
+        videoController.finish();
     }
 }

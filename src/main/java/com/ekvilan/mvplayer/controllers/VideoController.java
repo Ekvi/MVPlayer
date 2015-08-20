@@ -28,7 +28,7 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
     }
 
     public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        return mediaPlayer != null && mediaPlayer.isPlaying();
     }
 
     public void play() {
@@ -44,10 +44,16 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
     }
 
     public int getCurrentPosition() {
+        if (mediaPlayer == null) {
+            return 0;
+        }
         return mediaPlayer.getCurrentPosition();
     }
 
     public int getDuration() {
+        if (mediaPlayer == null) {
+            return 0;
+        }
         return mediaPlayer.getDuration();
     }
 
