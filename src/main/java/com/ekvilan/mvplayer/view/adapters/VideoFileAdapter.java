@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.List;
 
 public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int EMPTY_VIEW = 10;
+
     private DurationConverter durationConverter;
     private LayoutInflater inflater;
     private List<String> videoLinks;
@@ -31,6 +33,10 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == EMPTY_VIEW) {
+            return new EmptyViewHolder(inflater.inflate(R.layout.empty_row, parent, false));
+        }
+
         return new VideoFileViewHolder(
                 inflater.inflate(R.layout.video_file_row, parent, false));
     }
@@ -77,6 +83,9 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
+        if (videoLinks.size() == 0) {
+            return EMPTY_VIEW;
+        }
         return super.getItemViewType(position);
     }
 
@@ -92,6 +101,12 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             fileName = (TextView) itemView.findViewById(R.id.tvVideoName);
             fileSize = (TextView) itemView.findViewById(R.id.tvFileSize);
             videoLength = (TextView) itemView.findViewById(R.id.tvVideoLength);
+        }
+    }
+
+    public class EmptyViewHolder extends RecyclerView.ViewHolder {
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

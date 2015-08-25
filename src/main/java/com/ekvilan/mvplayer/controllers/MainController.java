@@ -79,4 +79,12 @@ public class MainController {
     public String getVideo(int position) {
         return videoLinksProvider.getVideo(position);
     }
+
+    public List<String> getRecentVideo() {
+        return videoLinksProvider.getRecentVideo();
+    }
+
+    public void addToRecentVideo(String link) {
+        videoLinksProvider.addToRecentVideo(link);
+    }
 }

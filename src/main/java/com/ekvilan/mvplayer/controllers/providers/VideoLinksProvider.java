@@ -4,17 +4,23 @@ package com.ekvilan.mvplayer.controllers.providers;
 import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.utils.StorageUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoLinksProvider {
+    private final int RECENT_VIDEO_SIZE = 10;
+
     private static VideoLinksProvider instance;
 
     private List<StorageUtils.StorageInfo> storageList;
     private List<FileProvider.VideoFolder> sdCardVideo;
     private List<FileProvider.VideoFolder> internalStorageVideo;
+    private List<String> recentVideo;
     private List<String> videoLinks;
 
-    private VideoLinksProvider() {}
+    private VideoLinksProvider() {
+        recentVideo = new ArrayList<>(10);
+    }
 
     public static VideoLinksProvider getInstance() {
         if(instance == null) {
@@ -73,5 +79,21 @@ public class VideoLinksProvider {
 
     public String getVideo(int position) {
         return videoLinks.get(position);
+    }
+
+    public void addToRecentVideo(String videoLink) {
+        if(!recentVideo.contains(videoLink)) {
+            if (recentVideo.size() == RECENT_VIDEO_SIZE) {
+                recentVideo.remove(RECENT_VIDEO_SIZE - 1);
+            }
+            recentVideo.add(0, videoLink);
+        } else {
+            recentVideo.remove(videoLink);
+            recentVideo.add(0, videoLink);
+        }
+    }
+
+    public List<String> getRecentVideo() {
+        return recentVideo;
     }
 }

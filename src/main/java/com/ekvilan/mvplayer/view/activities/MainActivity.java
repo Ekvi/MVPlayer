@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickRecentVideo() {
         storage = getResources().getString(R.string.sliderRecently);
-        //setUpFolderList(); todo set list of recent video
+        showVideoList(0);
         fillPathLayout(MainActivity.this.getResources().getString(R.string.memPathRecentVideo),
                 getResources().getColor(R.color.black), getResources().getColor(R.color.black),
                 getResources().getColor(R.color.white));
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             setStorageTextColor(getResources().getColor(R.color.black),
                     getResources().getColor(R.color.white), getResources().getColor(R.color.black));
         } else {
-            //todo set up recent video list
+            setUpRecentVideoFileList(mainController.getRecentVideo());
         }
     }
 
@@ -201,5 +201,15 @@ public class MainActivity extends AppCompatActivity {
                                 int internalStorageColor, int sdCardColor, int recentVideoColor) {
         setMemoryPath(path);
         setStorageTextColor(internalStorageColor, sdCardColor, recentVideoColor);
+    }
+
+    private void setUpRecentVideoFileList(List<String> recentVideos) {
+        isFolderList = false;
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if(recentVideos!= null && !recentVideos.isEmpty()) {
+            recyclerView.setAdapter(new VideoFileAdapter(this, recentVideos));
+        } else {
+            recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST));
+        }
     }
 }

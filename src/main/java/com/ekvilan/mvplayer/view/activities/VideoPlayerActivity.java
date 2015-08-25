@@ -186,9 +186,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         if(outsideAppLink != null) {
             videoController.createPlayer(holder, outsideAppLink);
             setText(tvName, getName(outsideAppLink));
+            addToRecentVideo(outsideAppLink);
         } else {
             videoController.createPlayer(holder, mainController.getVideo(position));
             setText(tvName, getName(mainController.getVideo(position)));
+            addToRecentVideo(mainController.getVideo(position));
         }
         updateProgressBar();
 
@@ -282,5 +284,9 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
         scheduledExecutorService.shutdown();
         videoController.finish();
+    }
+
+    private void addToRecentVideo(String videoLink) {
+        mainController.addToRecentVideo(videoLink);
     }
 }
