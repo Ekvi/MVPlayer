@@ -87,4 +87,8 @@ public class MainController {
     public void addToRecentVideo(String link) {
         videoLinksProvider.addToRecentVideo(link);
     }
+
+    public void saveRecentVideo(List<String> recentVideo) {
+        videoLinksProvider.saveRecentVideo(recentVideo);
+    }
 }

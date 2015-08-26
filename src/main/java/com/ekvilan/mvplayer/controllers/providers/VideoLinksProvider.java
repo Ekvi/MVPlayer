@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoLinksProvider {
-    private final int RECENT_VIDEO_SIZE = 10;
+    public static final int RECENT_VIDEO_SIZE = 10;
 
     private static VideoLinksProvider instance;
 
@@ -95,5 +95,9 @@ public class VideoLinksProvider {
 
     public List<String> getRecentVideo() {
         return recentVideo;
+    }
+
+    public void saveRecentVideo(List<String> recentVideo) {
+        this.recentVideo = recentVideo;
     }
 }

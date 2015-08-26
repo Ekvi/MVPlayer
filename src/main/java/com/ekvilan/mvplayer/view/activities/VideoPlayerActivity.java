@@ -58,7 +58,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         videoController = new VideoController();
         durationConverter = new DurationConverter();
 
-        position = getIntent().getIntExtra("position", 0);
+        position = getIntent().getIntExtra(MainActivity.POSITION, 0);
 
         Uri uri = getIntent().getData();
         if(uri != null) {

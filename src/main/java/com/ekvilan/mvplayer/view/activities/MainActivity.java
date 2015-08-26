@@ -2,6 +2,7 @@ package com.ekvilan.mvplayer.view.activities;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
+import com.ekvilan.mvplayer.controllers.providers.VideoLinksProvider;
 import com.ekvilan.mvplayer.view.adapters.VideoFileAdapter;
 import com.ekvilan.mvplayer.view.adapters.VideoFoldersAdapter;
 import com.ekvilan.mvplayer.view.listeners.RecyclerItemClickListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +25,12 @@ import static com.ekvilan.mvplayer.utils.FileProvider.*;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final String POSITION = "position";
+    private final String RECENT_VIDEO = "recentVideo";
+    private final String IS_FOLDER_LIST = "isFolderList";
+    private final String STORAGE = "storage";
+    private final String SAVED_POSITION = "savedPosition";
+
     private MainController mainController;
 
     private RecyclerView recyclerView;
@@ -30,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvSdCard;
     private TextView tvRecentVideo;
 
+    private SharedPreferences preferences;
     private String storage;
     private boolean isFolderList;
     private int savedPosition;
+    private VideoFileAdapter videoFileAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mainController = MainController.getInstance();
+        loadFromPreferences();
 
         if(mainController.getInternalStorageVideo() == null
                                 || mainController.getSdCardVideo() == null) {
@@ -70,10 +82,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpVideoFileList(VideoFolder videoFolder) {
+        videoFileAdapter = new VideoFileAdapter(this, videoFolder.getVideoLinks());
         isFolderList = false;
         mainController.cacheCurrentVideoLinks(videoFolder.getVideoLinks());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new VideoFileAdapter(this, videoFolder.getVideoLinks()));
+        recyclerView.setAdapter(videoFileAdapter);
     }
 
     private void setMemoryPath(String path) {
@@ -161,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void playVideo(int position) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
-        intent.putExtra("position", position);
+        intent.putExtra(POSITION, position);
         startActivity(intent);
     }
 
@@ -174,17 +187,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("isFolderList", isFolderList);
-        outState.putString("storage", storage);
-        outState.putInt("savedPosition", savedPosition);
+        outState.putBoolean(IS_FOLDER_LIST, isFolderList);
+        outState.putString(STORAGE, storage);
+        outState.putInt(SAVED_POSITION, savedPosition);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        isFolderList = savedInstanceState.getBoolean("isFolderList");
-        storage = savedInstanceState.getString("storage");
-        savedPosition = savedInstanceState.getInt("savedPosition");
+        isFolderList = savedInstanceState.getBoolean(IS_FOLDER_LIST);
+        storage = savedInstanceState.getString(STORAGE);
+        savedPosition = savedInstanceState.getInt(SAVED_POSITION);
 
         if (isFolderList) {
             if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
@@ -204,12 +217,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecentVideoFileList(List<String> recentVideos) {
+        videoFileAdapter = new VideoFileAdapter(this, recentVideos);
+
         isFolderList = false;
+        mainController.cacheCurrentVideoLinks(recentVideos);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         if(recentVideos!= null && !recentVideos.isEmpty()) {
-            recyclerView.setAdapter(new VideoFileAdapter(this, recentVideos));
+            recyclerView.setAdapter(videoFileAdapter);
         } else {
             recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveAppState();
+        super.onDestroy();
+    }
+
+    private void saveAppState() {
+        preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        for(int i = 0; i < mainController.getRecentVideo().size(); i++) {
+            editor.putString(RECENT_VIDEO + i, mainController.getRecentVideo().get(i));
+        }
+        editor.commit();
+    }
+
+    private void loadFromPreferences() {
+        preferences = getPreferences(MODE_PRIVATE);
+
+        List<String> recent = new ArrayList<>();
+        for(int i = 0; i < VideoLinksProvider.RECENT_VIDEO_SIZE; i++) {
+            String value = preferences.getString(RECENT_VIDEO + i, "");
+            if(!value.isEmpty()) {
+                recent.add(value);
+            }
+        }
+        mainController.saveRecentVideo(recent);
+        mainController.cacheCurrentVideoLinks(recent);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        videoFileAdapter.notifyDataSetChanged();
     }
 }
