@@ -263,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        videoFileAdapter.notifyDataSetChanged();
+        if(videoFileAdapter != null) {
+            videoFileAdapter.notifyDataSetChanged();
+        }
     }
 }

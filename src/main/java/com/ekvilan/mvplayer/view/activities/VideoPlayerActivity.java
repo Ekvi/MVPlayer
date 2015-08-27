@@ -123,11 +123,11 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
                 if(videoController.isPlaying()) {
                     videoController.pause();
                     drawable = ResourcesCompat
-                            .getDrawable(getResources(), android.R.drawable.ic_media_play, null);
+                            .getDrawable(getResources(), R.drawable.ic_media_play, null);
                 } else {
                     videoController.play();
                     drawable = ResourcesCompat
-                            .getDrawable(getResources(), android.R.drawable.ic_media_pause, null);
+                            .getDrawable(getResources(), R.drawable.ic_media_pause, null);
                     startTimer();
                 }
                 setImage(btnPlay, drawable);
@@ -195,7 +195,7 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         updateProgressBar();
 
         setImage(btnPlay, ResourcesCompat
-                .getDrawable(getResources(), android.R.drawable.ic_media_pause, null));
+                .getDrawable(getResources(), R.drawable.ic_media_pause, null));
         setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
     }
 

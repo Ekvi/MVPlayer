@@ -26,8 +26,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:textColor="@color/textColor"
                 android:textStyle="bold"
                 android:textSize="20sp" />
@@ -52,22 +52,27 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
+                    android:paddingTop="5dp"
+                    android:textSize="16sp"
                     android:textColor="@color/white" />
                 <SeekBar
                     android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dip"
-                    android:layout_height="32dp"
-                    android:layout_weight="1" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxHeight="5dp"
+                    android:minHeight="5dp"
+                    android:progressDrawable="@drawable/progressbar"
+                    android:thumb="@drawable/scrubber_control_normal_holo" />
                 <TextView
                     android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
+                    android:paddingTop="5dp"
                     android:layout_gravity="center_horizontal"
+                    android:textSize="16sp"
                     android:textColor="@color/white"/>
             </LinearLayout>
 
@@ -75,7 +80,8 @@
                 android:id="@+id/buttonsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/progressLayout" >
+                android:layout_below="@id/progressLayout"
+                android:paddingBottom="10dp">
                 <LinearLayout
                     android:id="@+id/controls"
                     android:layout_width="wrap_content"
@@ -86,16 +92,18 @@
                         android:id="@+id/prev"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:drawable/ic_media_previous" />
+                        android:background="@drawable/prev" />
                     <ImageView
                         android:id="@+id/play"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp" />
                     <ImageView
                         android:id="@+id/next"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:drawable/ic_media_next" />
+                        android:background="@drawable/next"  />
                 </LinearLayout>
             </RelativeLayout>
 

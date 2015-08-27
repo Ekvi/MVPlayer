@@ -7,4 +7,9 @@
     <color name="textColor">#FFFFFF</color>
     <color name="top_bottom_background">#AA000000</color>
     <color name="progressBar">#BDBDBD</color>
+    <color name="light_gray_header_color">#646663</color>
+    <color name="progressStartColor">#42A5F5</color>
+    <color name="progressEndColor">#1E88E5</color>
+    <color name="secondProgressStartColor">#B2EBF2</color>
+    <color name="secondProgressEndColor">#4DD0E1</color>
 </resources>
