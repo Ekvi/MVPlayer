@@ -18,13 +18,15 @@ import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
 import com.ekvilan.mvplayer.controllers.VideoController;
 import com.ekvilan.mvplayer.utils.DurationConverter;
+import com.ekvilan.mvplayer.view.listeners.VideoFinishedListener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callback {
+public class VideoPlayerActivity extends Activity implements
+        SurfaceHolder.Callback, VideoFinishedListener {
     private final int DELAY = 3000;
 
     private SurfaceHolder surfaceHolder;
@@ -57,6 +59,8 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         mainController = MainController.getInstance();
         videoController = new VideoController();
         durationConverter = new DurationConverter();
+
+        videoController.setVideoFinishedListener(this);
 
         position = getIntent().getIntExtra(MainActivity.POSITION, 0);
 
@@ -156,22 +160,14 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (position > 0) {
-                    startNewVideo(--position);
-                    setText(tvName, getName(mainController.getVideo(position)));
-                }
-                startTimer();
+                playPrev();
             }
         });
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position < mainController.getCurrentVideoLinksSize() - 1) {
-                    startNewVideo(++position);
-                    setText(tvName, getName(mainController.getVideo(position)));
-                }
-                startTimer();
+                playNext();
             }
         });
     }
@@ -288,5 +284,33 @@ public class VideoPlayerActivity extends Activity implements SurfaceHolder.Callb
 
     private void addToRecentVideo(String videoLink) {
         mainController.addToRecentVideo(videoLink);
+    }
+
+    private void playPrev() {
+        if (position > 0) {
+            startNewVideo(--position);
+            setText(tvName, getName(mainController.getVideo(position)));
+            setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
+        }
+        startTimer();
+    }
+
+    private void playNext() {
+        if(position < mainController.getCurrentVideoLinksSize() - 1) {
+            startNewVideo(++position);
+            setText(tvName, getName(mainController.getVideo(position)));
+            setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
+        }
+        startTimer();
+
+    }
+
+    @Override
+    public void onFinished() {
+        if(position == mainController.getCurrentVideoLinksSize() - 1) {
+            setImage(btnPlay, ResourcesCompat
+                    .getDrawable(getResources(), R.drawable.ic_media_play, null));
+        }
+        playNext();
     }
 }

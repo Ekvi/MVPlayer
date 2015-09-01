@@ -4,9 +4,17 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.SurfaceHolder;
 
+import com.ekvilan.mvplayer.view.listeners.VideoFinishedListener;
+
 
 public class VideoController implements MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
+
+    private VideoFinishedListener videoFinishedListener;
+
+    public void setVideoFinishedListener(VideoFinishedListener videoFinishedListener) {
+        this.videoFinishedListener = videoFinishedListener;
+    }
 
     public void createPlayer(SurfaceHolder surfaceHolder, String uri) {
         try {
@@ -16,6 +24,14 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
             mediaPlayer.prepare();
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if(videoFinishedListener != null) {
+                        videoFinishedListener.onFinished();
+                    }
+                }
+            });
         }
         catch(Exception e){
             e.printStackTrace();
