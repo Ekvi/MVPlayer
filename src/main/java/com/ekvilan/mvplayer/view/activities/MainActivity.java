@@ -31,19 +31,19 @@ public class MainActivity extends AppCompatActivity {
     private final String STORAGE = "storage";
     private final String SAVED_POSITION = "savedPosition";
 
-    private MainController mainController;
-
     private RecyclerView recyclerView;
     private TextView memoryPath;
     private TextView tvInternalStorage;
     private TextView tvSdCard;
     private TextView tvRecentVideo;
 
+    private MainController mainController;
+    private VideoFileAdapter videoFileAdapter;
     private SharedPreferences preferences;
     private String storage;
     private boolean isFolderList;
     private int savedPosition;
-    private VideoFileAdapter videoFileAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
     private void playVideo(int position) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
         intent.putExtra(POSITION, position);
+        intent.setAction(Intent.ACTION_VIEW);
+
         startActivity(intent);
     }
 

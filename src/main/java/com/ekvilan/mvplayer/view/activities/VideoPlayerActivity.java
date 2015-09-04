@@ -66,7 +66,7 @@ public class VideoPlayerActivity extends Activity implements
 
         Uri uri = getIntent().getData();
         if(uri != null) {
-            outsideAppLink = uri.getPath();
+            outsideAppLink = uri.toString();
         }
 
         initView();
@@ -160,14 +160,18 @@ public class VideoPlayerActivity extends Activity implements
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playPrev();
+                if(outsideAppLink == null) {
+                    playPrev();
+                }
             }
         });
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playNext();
+                if(outsideAppLink == null) {
+                    playNext();
+                }
             }
         });
     }
@@ -307,10 +311,12 @@ public class VideoPlayerActivity extends Activity implements
 
     @Override
     public void onFinished() {
-        if(position == mainController.getCurrentVideoLinksSize() - 1) {
-            setImage(btnPlay, ResourcesCompat
-                    .getDrawable(getResources(), R.drawable.ic_media_play, null));
+        if (outsideAppLink == null) {
+            if (position == mainController.getCurrentVideoLinksSize() - 1) {
+                setImage(btnPlay, ResourcesCompat
+                        .getDrawable(getResources(), R.drawable.ic_media_play, null));
+            }
+            playNext();
         }
-        playNext();
     }
 }
