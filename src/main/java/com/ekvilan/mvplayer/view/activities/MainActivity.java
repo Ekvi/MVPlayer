@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
     private void playVideo(int position) {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
         intent.putExtra(POSITION, position);
-        intent.setAction(Intent.ACTION_VIEW);
 
         startActivity(intent);
     }
