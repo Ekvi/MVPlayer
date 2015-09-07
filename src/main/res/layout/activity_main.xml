@@ -3,11 +3,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <include
+        android:id="@+id/main_toolbar"
+        layout="@layout/main_toolbar" />
 
     <HorizontalScrollView
         android:id="@+id/storagePanel"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/main_toolbar"
         android:background="@color/topPanel">
         <LinearLayout
             android:layout_width="wrap_content"

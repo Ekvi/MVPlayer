@@ -12,4 +12,6 @@
     <color name="progressEndColor">#1E88E5</color>
     <color name="secondProgressStartColor">#B2EBF2</color>
     <color name="secondProgressEndColor">#4DD0E1</color>
+    <color name="edgesToolbar">#0D47A1</color>
+    <color name="centerToolbar">#1565C0</color>
 </resources>

@@ -91,4 +91,8 @@ public class MainController {
     public void saveRecentVideo(List<String> recentVideo) {
         videoLinksProvider.saveRecentVideo(recentVideo);
     }
+
+    public List<String> findVideo(String text) {
+        return videoLinksProvider.findVideo(text);
+    }
 }

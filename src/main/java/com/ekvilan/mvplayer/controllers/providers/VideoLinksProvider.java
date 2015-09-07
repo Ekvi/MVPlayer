@@ -1,6 +1,7 @@
 package com.ekvilan.mvplayer.controllers.providers;
 
 
+
 import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.utils.StorageUtils;
 
@@ -99,5 +100,43 @@ public class VideoLinksProvider {
 
     public void saveRecentVideo(List<String> recentVideo) {
         this.recentVideo = recentVideo;
+    }
+
+    public List<String> findVideo(String text) {
+        List<String> requiredVideos = new ArrayList<>();
+
+        requiredVideos.addAll(find(text, internalStorageVideo));
+        requiredVideos.addAll(find(text, sdCardVideo));
+
+        return requiredVideos;
+    }
+
+    private List<String> find(String text, List<FileProvider.VideoFolder> folders) {
+        List<String> videos = new ArrayList<>();
+        for(FileProvider.VideoFolder videoFolder : folders) {
+            List<String> paths = videoFolder.getVideoLinks();
+            for(String path : paths) {
+                String fileName = splitVideo(path).toLowerCase();
+                if(fileName.startsWith(text)) {
+                    videos.add(0, path);
+                } else {
+                    String[] splitName = fileName.split(" ");
+                    if(splitName.length > 1) {
+                        for (int i = 1; i < splitName.length; i++) {
+                            if (splitName[i].startsWith(text)) {
+                                videos.add(path);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return videos;
+    }
+
+    String splitVideo(String path) {
+        String[] split = path.split("/");
+        return split[split.length - 1];
     }
 }

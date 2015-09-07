@@ -4,10 +4,15 @@ package com.ekvilan.mvplayer.view.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvInternalStorage;
     private TextView tvSdCard;
     private TextView tvRecentVideo;
+    private EditText searchEditText;
 
     private MainController mainController;
     private VideoFileAdapter videoFileAdapter;
@@ -69,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
         tvInternalStorage  = (TextView) findViewById(R.id.tvInternalMemory);
         tvSdCard  = (TextView) findViewById(R.id.tvSdCard);
         tvRecentVideo = (TextView) findViewById(R.id.tvRecently);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+
+        searchEditText = (EditText) findViewById(R.id.et_search);
+        searchEditText.setVisibility(View.INVISIBLE);
     }
 
     private void setUpFolderList(List<VideoFolder> folders) {
@@ -126,6 +138,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clickRecentVideo();
+            }
+        });
+
+        searchEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findVideo(searchEditText.getText().toString());
             }
         });
     }
@@ -194,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         isFolderList = savedInstanceState.getBoolean(IS_FOLDER_LIST);
         storage = savedInstanceState.getString(STORAGE);
@@ -218,13 +237,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecentVideoFileList(List<String> recentVideos) {
-        videoFileAdapter = new VideoFileAdapter(this, recentVideos);
+        showVideo(recentVideos);
+    }
+
+    private void showVideo(List<String> videos) {
+        videoFileAdapter = new VideoFileAdapter(this, videos);
 
         isFolderList = false;
-        mainController.cacheCurrentVideoLinks(recentVideos);
+        mainController.cacheCurrentVideoLinks(videos);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        if(recentVideos!= null && !recentVideos.isEmpty()) {
+        if(videos!= null && !videos.isEmpty()) {
             recyclerView.setAdapter(videoFileAdapter);
         } else {
             recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST));
@@ -266,6 +289,58 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         if(videoFileAdapter != null) {
             videoFileAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_search) {
+            setToolBar(true, true, false, View.VISIBLE);
+        }
+        if(id == android.R.id.home) {
+            setToolBar(false, false, true, View.INVISIBLE);
+            previousStorage();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void findVideo(String text) {
+        setUpFoundVideo(mainController.findVideo(text.toLowerCase()));
+    }
+
+    private void setUpFoundVideo(List<String> foundVideos) {
+        int black = getResources().getColor(R.color.black);
+        fillPathLayout(getResources().getString(R.string.memFoundVideo), black, black, black);
+        showVideo(foundVideos);
+    }
+
+    private void setToolBar(boolean isHomeBtnEnabled, boolean isDisplayHomeAsUpEnabled,
+                            boolean isShowTitle, int visibleType) {
+        getSupportActionBar().setHomeButtonEnabled(isHomeBtnEnabled);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(isDisplayHomeAsUpEnabled);
+        getSupportActionBar().setDisplayShowTitleEnabled(isShowTitle);
+        searchEditText.setVisibility(visibleType);
+    }
+
+    private void previousStorage() {
+        if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
+            clickInternalStorage();
+        } else if(storage.equals(getResources().getString(R.string.sliderSdCard))) {
+            clickSdCardStorage();
+        } else {
+            clickRecentVideo();
         }
     }
 }

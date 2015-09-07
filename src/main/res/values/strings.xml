@@ -9,4 +9,7 @@
     <string name="noVideoMessage">There is no video</string>
     <string name="memPathRecentVideo">recent video</string>
     <string name="uri">uri</string>
+    <string name="searchHint">search video</string>
+    <string name="memFoundVideo">found video</string>
+    <string name="searchTitle">Search</string>
 </resources>
