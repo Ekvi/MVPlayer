@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String POSITION = "position";
     private final String RECENT_VIDEO = "recentVideo";
     private final String IS_FOLDER_LIST = "isFolderList";
+    private final String IS_SEARCH = "isSearch";
     private final String STORAGE = "storage";
     private final String SAVED_POSITION = "savedPosition";
+    private final String CURRENT_VIDEO_LINKS = "currentVideoLinks";
 
     private RecyclerView recyclerView;
     private TextView memoryPath;
@@ -48,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private String storage;
     private boolean isFolderList;
+    private boolean isSearch;
     private int savedPosition;
-
+    private int black;
+    private int white;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                                 || mainController.getSdCardVideo() == null) {
             mainController.cacheVideoLinks();
         }
+
+        black = getResources().getColor(R.color.black);
+        white = getResources().getColor(R.color.white);
 
         initView();
         clickInternalStorage();
@@ -151,43 +159,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickInternalStorage() {
         storage = getResources().getString(R.string.sliderInternalMemory);
+        isSearch = false;
         setUpFolderList(mainController.getInternalStorageVideo());
-        fillPathLayout(mainController.getStoragePath(0), getResources().getColor(R.color.white),
-                getResources().getColor(R.color.black), getResources().getColor(R.color.black));
+        fillPathLayout(mainController.getStoragePath(0), white, black, black);
     }
 
     private void clickSdCardStorage() {
         storage = getResources().getString(R.string.sliderSdCard);
+        isSearch = false;
         setUpFolderList(mainController.getSdCardVideo());
         if(mainController.getStorageListSize() > 1) {
             setMemoryPath(mainController.getStoragePath(1));
         }
-        setStorageTextColor(getResources().getColor(R.color.black),
-                getResources().getColor(R.color.white), getResources().getColor(R.color.black));
+        setStorageTextColor(black, white, black);
     }
 
     private void clickRecentVideo() {
         storage = getResources().getString(R.string.sliderRecently);
+        isSearch = false;
         showVideoList(0);
-        fillPathLayout(MainActivity.this.getResources().getString(R.string.memPathRecentVideo),
-                getResources().getColor(R.color.black), getResources().getColor(R.color.black),
-                getResources().getColor(R.color.white));
+        fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
     }
 
     private void showVideoList(int position) {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
             setUpVideoFileList(mainController.getInternalVideoFolder(position));
-            fillPathLayout(mainController.getStoragePath(0), getResources().getColor(R.color.white),
-                    getResources().getColor(R.color.black), getResources().getColor(R.color.black));
+            fillPathLayout(mainController.getStoragePath(0), white, black, black);
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
             setUpVideoFileList(mainController.getSdCardFolder(position));
             if(mainController.getStorageListSize() > 1) {
                 setMemoryPath(mainController.getStoragePath(1));
             }
-            setStorageTextColor(getResources().getColor(R.color.black),
-                    getResources().getColor(R.color.white), getResources().getColor(R.color.black));
+            setStorageTextColor(black, white, black);
         } else {
             setUpRecentVideoFileList(mainController.getRecentVideo());
+            fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
         }
     }
 
@@ -210,6 +216,11 @@ public class MainActivity extends AppCompatActivity {
         outState.putBoolean(IS_FOLDER_LIST, isFolderList);
         outState.putString(STORAGE, storage);
         outState.putInt(SAVED_POSITION, savedPosition);
+        if(isSearch) {
+            outState.putBoolean(IS_SEARCH, true);
+            outState.putStringArrayList(
+                    CURRENT_VIDEO_LINKS, new ArrayList<>(mainController.getCurrentVideoLinks()));
+        }
     }
 
     @Override
@@ -226,12 +237,17 @@ public class MainActivity extends AppCompatActivity {
                 clickSdCardStorage();
             }
         } else {
-            showVideoList(savedPosition);
+            isSearch = savedInstanceState.getBoolean(IS_SEARCH);
+            if(isSearch) {
+                setUpFoundVideo(savedInstanceState.getStringArrayList(CURRENT_VIDEO_LINKS));
+            } else {
+                showVideoList(savedPosition);
+            }
         }
     }
 
-    private void fillPathLayout(String path,
-                                int internalStorageColor, int sdCardColor, int recentVideoColor) {
+    private void fillPathLayout(
+            String path, int internalStorageColor, int sdCardColor, int recentVideoColor) {
         setMemoryPath(path);
         setStorageTextColor(internalStorageColor, sdCardColor, recentVideoColor);
     }
@@ -321,9 +337,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpFoundVideo(List<String> foundVideos) {
-        int black = getResources().getColor(R.color.black);
         fillPathLayout(getResources().getString(R.string.memFoundVideo), black, black, black);
         showVideo(foundVideos);
+        isSearch = true;
     }
 
     private void setToolBar(boolean isHomeBtnEnabled, boolean isDisplayHomeAsUpEnabled,
