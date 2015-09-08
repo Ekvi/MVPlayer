@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private MainController mainController;
     private VideoFileAdapter videoFileAdapter;
     private SharedPreferences preferences;
+
     private String storage;
     private boolean isFolderList;
     private boolean isSearch;
@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 findVideo(searchEditText.getText().toString());
+                getSupportActionBar().setTitle(getResources().getString(R.string.foundFiles));
             }
         });
     }
@@ -164,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
         isSearch = false;
         setUpFolderList(mainController.getInternalStorageVideo());
         fillPathLayout(mainController.getStoragePath(0), white, black, black);
+        setToolBar(false, false, true, View.INVISIBLE);
+        getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
     }
 
     private void clickSdCardStorage() {
@@ -174,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
             setMemoryPath(mainController.getStoragePath(1));
         }
         setStorageTextColor(black, white, black);
+        setToolBar(false, false, true, View.INVISIBLE);
+        getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
     }
 
     private void clickRecentVideo() {
@@ -181,18 +186,24 @@ public class MainActivity extends AppCompatActivity {
         isSearch = false;
         showVideoList(0);
         fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
+        setToolBar(false, false, true, View.INVISIBLE);
+        getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
     }
 
     private void showVideoList(int position) {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
             setUpVideoFileList(mainController.getInternalVideoFolder(position));
             fillPathLayout(mainController.getStoragePath(0), white, black, black);
+            getSupportActionBar().setTitle(splitName(
+                    mainController.getInternalVideoFolder(position).getFolderName()));
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
             setUpVideoFileList(mainController.getSdCardFolder(position));
             if(mainController.getStorageListSize() > 1) {
                 setMemoryPath(mainController.getStoragePath(1));
             }
             setStorageTextColor(black, white, black);
+            getSupportActionBar().setTitle(splitName(
+                    mainController.getInternalVideoFolder(position).getFolderName()));
         } else {
             setUpRecentVideoFileList(mainController.getRecentVideo());
             fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
@@ -351,11 +362,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setToolBar(boolean isHomeBtnEnabled, boolean isDisplayHomeAsUpEnabled,
-                            boolean isShowTitle, int visibleType) {
+                            boolean isShowTitle, int searchVisibility) {
         getSupportActionBar().setHomeButtonEnabled(isHomeBtnEnabled);
         getSupportActionBar().setDisplayHomeAsUpEnabled(isDisplayHomeAsUpEnabled);
         getSupportActionBar().setDisplayShowTitleEnabled(isShowTitle);
-        searchEditText.setVisibility(visibleType);
+        searchEditText.setVisibility(searchVisibility);
     }
 
     private void previousStorage() {
@@ -366,5 +377,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             clickRecentVideo();
         }
+    }
+
+    private String splitName(String text) {
+        String[] split = text.split("/");
+        return split[split.length - 1];
     }
 }

@@ -10,6 +10,7 @@
     <string name="memPathRecentVideo">недавнє відео</string>
     <string name="uri">uri</string>
     <string name="searchHint">пошук відео</string>
-    <string name="memFoundVideo">знайденні відео файли</string>
+    <string name="memFoundVideo">знайдені відео файли</string>
     <string name="searchTitle">Search</string>
+    <string name="foundFiles">Знайдені файли</string>
 </resources>

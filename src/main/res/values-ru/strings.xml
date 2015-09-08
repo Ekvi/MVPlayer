@@ -12,4 +12,5 @@
     <string name="searchHint">поиск видео</string>
     <string name="memFoundVideo">найденные видео файлы</string>
     <string name="searchTitle">Search</string>
+    <string name="foundFiles">Найденные файлы</string>
 </resources>
