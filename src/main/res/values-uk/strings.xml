@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MV Player</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="title_activity_video_player">MV Player</string>
+    <string name="sliderInternalMemory">Внутрішня пам`ять</string>
+    <string name="sliderSdCard">SD карта</string>
+    <string name="sliderRecently">Недавнє відео</string>
+    <string name="filesCount">відео</string>
+    <string name="noVideoMessage">Нема відео.</string>
+    <string name="memPathRecentVideo">недавнє відео</string>
+    <string name="uri">uri</string>
+    <string name="searchHint">пошук відео</string>
+    <string name="memFoundVideo">знайденні відео файли</string>
+    <string name="searchTitle">Search</string>
+</resources>

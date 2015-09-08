@@ -1,6 +1,7 @@
 package com.ekvilan.mvplayer.view.activities;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -334,6 +336,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void findVideo(String text) {
         setUpFoundVideo(mainController.findVideo(text.toLowerCase()));
+        setToolBar(false, false, true, View.INVISIBLE);
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     private void setUpFoundVideo(List<String> foundVideos) {

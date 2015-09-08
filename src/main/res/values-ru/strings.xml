@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MV Player</string>
+    <string name="action_settings">Настройки</string>
+    <string name="title_activity_video_player">MV Player</string>
+    <string name="sliderInternalMemory">Память телефона</string>
+    <string name="sliderSdCard">SD карта</string>
+    <string name="sliderRecently">Недавнее видео</string>
+    <string name="filesCount">видео</string>
+    <string name="noVideoMessage">Нет видео.</string>
+    <string name="memPathRecentVideo">недавнее видео</string>
+    <string name="uri">uri</string>
+    <string name="searchHint">поиск видео</string>
+    <string name="memFoundVideo">найденные видео файлы</string>
+    <string name="searchTitle">Search</string>
+</resources>
