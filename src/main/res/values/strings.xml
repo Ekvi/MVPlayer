@@ -4,7 +4,7 @@
     <string name="title_activity_video_player">MV Player</string>
     <string name="sliderInternalMemory">Internal storage</string>
     <string name="sliderSdCard">SDCard</string>
-    <string name="sliderRecently">Recently</string>
+    <string name="sliderRecently">Recent video</string>
     <string name="filesCount">video</string>
     <string name="noVideoMessage">There is no video.</string>
     <string name="memPathRecentVideo">recent video</string>
