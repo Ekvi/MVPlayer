@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +22,20 @@ import java.util.List;
 public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int EMPTY_VIEW = 10;
 
+    private int position;
+    private boolean isRecent;
+
+    private Context context;
     private DurationConverter durationConverter;
     private LayoutInflater inflater;
     private List<String> videoLinks;
 
-    public VideoFileAdapter(Context context, List<String> videoLinks) {
+    public VideoFileAdapter(Context context, List<String> videoLinks, boolean isRecent) {
         inflater = LayoutInflater.from(context);
         durationConverter = new DurationConverter();
+        this.context = context;
         this.videoLinks = videoLinks;
+        this.isRecent = isRecent;
     }
 
     @Override
@@ -46,7 +53,7 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if(viewHolder instanceof VideoFileViewHolder) {
             String[] name = videoLinks.get(position).split("/");
 
-            VideoFileViewHolder holder = (VideoFileViewHolder) viewHolder;
+            final VideoFileViewHolder holder = (VideoFileViewHolder) viewHolder;
             holder.fileName.setText(name[name.length - 1]);
 
             Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoLinks.get(position),
@@ -56,7 +63,23 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             holder.fileSize.setText(calculateFileSize(videoLinks.get(position)));
             holder.videoLength.setText(durationConverter.convertDuration(getDuration(position)));
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    setPosition(holder.getAdapterPosition());
+                    return false;
+                }
+            });
         }
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     private String calculateFileSize(String uri) {
@@ -89,7 +112,7 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return super.getItemViewType(position);
     }
 
-    public class VideoFileViewHolder extends RecyclerView.ViewHolder {
+    public class VideoFileViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         ImageView imageView;
         TextView fileName;
         TextView fileSize;
@@ -101,6 +124,14 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             fileName = (TextView) itemView.findViewById(R.id.tvVideoName);
             fileSize = (TextView) itemView.findViewById(R.id.tvFileSize);
             videoLength = (TextView) itemView.findViewById(R.id.tvVideoLength);
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            if(isRecent) {
+                menu.add(0, 1, 0, context.getResources().getString(R.string.removeFromRecent));
+            }
         }
     }
 

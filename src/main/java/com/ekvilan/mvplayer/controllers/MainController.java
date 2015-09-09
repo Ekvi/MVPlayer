@@ -95,4 +95,8 @@ public class MainController {
     public List<String> findVideo(String text) {
         return videoLinksProvider.findVideo(text);
     }
+
+    public void removeFromRecentVideo(int index) {
+        videoLinksProvider.removeFromRecentVideo(index);
+    }
 }

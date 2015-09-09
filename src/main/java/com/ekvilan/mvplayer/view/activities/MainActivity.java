@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         initView();
         clickInternalStorage();
         addListeners();
+
+        registerForContextMenu(recyclerView);
     }
 
     private void initView() {
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpVideoFileList(VideoFolder videoFolder) {
-        videoFileAdapter = new VideoFileAdapter(this, videoFolder.getVideoLinks());
+        videoFileAdapter = new VideoFileAdapter(this, videoFolder.getVideoLinks(), isRecent());
         isFolderList = false;
         mainController.cacheCurrentVideoLinks(videoFolder.getVideoLinks());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -270,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showVideo(List<String> videos) {
-        videoFileAdapter = new VideoFileAdapter(this, videos);
+        videoFileAdapter = new VideoFileAdapter(this, videos, isRecent());
 
         isFolderList = false;
         mainController.cacheCurrentVideoLinks(videos);
@@ -279,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         if(videos!= null && !videos.isEmpty()) {
             recyclerView.setAdapter(videoFileAdapter);
         } else {
-            recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST));
+            recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST, isRecent()));
         }
     }
 
@@ -292,11 +294,12 @@ public class MainActivity extends AppCompatActivity {
     private void saveAppState() {
         preferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
 
         for(int i = 0; i < mainController.getRecentVideo().size(); i++) {
             editor.putString(RECENT_VIDEO + i, mainController.getRecentVideo().get(i));
         }
-        editor.commit();
+        editor.apply();
     }
 
     private void loadFromPreferences() {
@@ -353,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+
     }
 
     private void setUpFoundVideo(List<String> foundVideos) {
@@ -382,5 +386,28 @@ public class MainActivity extends AppCompatActivity {
     private String splitName(String text) {
         String[] split = text.split("/");
         return split[split.length - 1];
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = -1;
+        try {
+            position = videoFileAdapter.getPosition();
+        } catch (Exception e) {
+
+            return super.onContextItemSelected(item);
+        }
+
+        if(position != -1) {
+            mainController.removeFromRecentVideo(position);
+            if(videoFileAdapter != null) {
+                videoFileAdapter.notifyDataSetChanged();
+            }
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private boolean isRecent() {
+        return storage.equals(getResources().getString(R.string.sliderRecently));
     }
 }

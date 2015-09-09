@@ -13,4 +13,5 @@
     <string name="memFoundVideo">found video</string>
     <string name="searchTitle">Search</string>
     <string name="foundFiles">Found files</string>
+    <string name="removeFromRecent">remove</string>
 </resources>

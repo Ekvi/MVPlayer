@@ -139,4 +139,8 @@ public class VideoLinksProvider {
         String[] split = path.split("/");
         return split[split.length - 1];
     }
+
+    public void removeFromRecentVideo(int index) {
+        recentVideo.remove(index);
+    }
 }
