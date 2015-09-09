@@ -25,8 +25,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class VideoPlayerActivity extends Activity implements
-        SurfaceHolder.Callback, VideoFinishedListener {
+public class VideoPlayerActivity extends Activity
+        implements SurfaceHolder.Callback, VideoFinishedListener {
+
     private final int DELAY = 3000;
 
     private SurfaceHolder surfaceHolder;
@@ -44,7 +45,7 @@ public class VideoPlayerActivity extends Activity implements
     private VideoController videoController;
     private MainController mainController;
     private DurationConverter durationConverter;
-    private Handler handler = new Handler();
+    private Handler handler;
     private ScheduledExecutorService scheduledExecutorService;
 
     private int position;
@@ -59,6 +60,7 @@ public class VideoPlayerActivity extends Activity implements
         mainController = MainController.getInstance();
         videoController = new VideoController();
         durationConverter = new DurationConverter();
+        handler = new Handler();
 
         videoController.setVideoFinishedListener(this);
 
@@ -99,10 +101,8 @@ public class VideoPlayerActivity extends Activity implements
                 if(!isShow) {
                     showPanels();
                     isShow = true;
-                    startTimer();
-                } else {
-                    startTimer();
                 }
+                startTimer();
             }
         });
 
@@ -186,7 +186,6 @@ public class VideoPlayerActivity extends Activity implements
         if(outsideAppLink != null) {
             videoController.createPlayer(holder, outsideAppLink);
             setText(tvName, getName(outsideAppLink));
-            addToRecentVideo(outsideAppLink);
         } else {
             videoController.createPlayer(holder, mainController.getVideo(position));
             setText(tvName, getName(mainController.getVideo(position)));
