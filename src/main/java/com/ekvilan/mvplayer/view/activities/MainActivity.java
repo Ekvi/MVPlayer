@@ -1,7 +1,9 @@
 package com.ekvilan.mvplayer.view.activities;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
 import com.ekvilan.mvplayer.controllers.providers.VideoLinksProvider;
+import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.view.adapters.VideoFileAdapter;
 import com.ekvilan.mvplayer.view.adapters.VideoFoldersAdapter;
 import com.ekvilan.mvplayer.view.listeners.RecyclerItemClickListener;
@@ -196,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
             setUpVideoFileList(mainController.getInternalVideoFolder(position));
             fillPathLayout(mainController.getStoragePath(0), white, black, black);
-            getSupportActionBar().setTitle(splitName(
+            getSupportActionBar().setTitle(FileProvider.extractName(
                     mainController.getInternalVideoFolder(position).getFolderName()));
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
             setUpVideoFileList(mainController.getSdCardFolder(position));
@@ -204,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 setMemoryPath(mainController.getStoragePath(1));
             }
             setStorageTextColor(black, white, black);
-            getSupportActionBar().setTitle(splitName(
+            getSupportActionBar().setTitle(FileProvider.extractName(
                     mainController.getInternalVideoFolder(position).getFolderName()));
         } else {
             setUpRecentVideoFileList(mainController.getRecentVideo());
@@ -299,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < mainController.getRecentVideo().size(); i++) {
             editor.putString(RECENT_VIDEO + i, mainController.getRecentVideo().get(i));
         }
-        editor.apply();
+        editor.commit();
     }
 
     private void loadFromPreferences() {
@@ -319,9 +322,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if(videoFileAdapter != null) {
-            videoFileAdapter.notifyDataSetChanged();
-        }
+        updateRecyclerView();
     }
 
     @Override
@@ -356,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-
     }
 
     private void setUpFoundVideo(List<String> foundVideos) {
@@ -383,31 +383,79 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String splitName(String text) {
-        String[] split = text.split("/");
-        return split[split.length - 1];
-    }
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int position = -1;
         try {
             position = videoFileAdapter.getPosition();
         } catch (Exception e) {
-
             return super.onContextItemSelected(item);
         }
 
-        if(position != -1) {
-            mainController.removeFromRecentVideo(position);
-            if(videoFileAdapter != null) {
-                videoFileAdapter.notifyDataSetChanged();
-            }
+        switch (item.getItemId()) {
+            case VideoFileAdapter.REMOVE_RECENT:
+                removeFromRecentVideoList(position);
+                break;
+            case VideoFileAdapter.REMOVE:
+                removeFromFileSystem(videoFileAdapter.getFilePath(), position);
+                break;
+            case VideoFileAdapter.RENAME:
+                renameVideoFile(videoFileAdapter.getFilePath(), position);
+                break;
         }
+
         return super.onContextItemSelected(item);
     }
 
     private boolean isRecent() {
         return storage.equals(getResources().getString(R.string.sliderRecently));
+    }
+
+    private void removeFromRecentVideoList(int position) {
+        if(position != -1) {
+            mainController.removeFromRecentVideo(position);
+            updateRecyclerView();
+        }
+    }
+
+    private void removeFromFileSystem(String path, int position) {
+        if(position != -1) {
+            mainController.removeVideo(path, position);
+            updateRecyclerView();
+        }
+    }
+
+    private void renameVideoFile(String path, int position) {
+        View view = getLayoutInflater().inflate(R.layout.rename_dialog, null);
+        EditText editText = (EditText)view.findViewById(R.id.etRename);
+        editText.setText(FileProvider.extractName(path));
+
+        showRenameDialog(view, editText, path, position);
+    }
+
+    private void updateRecyclerView() {
+        if(videoFileAdapter != null) {
+            videoFileAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void showRenameDialog(
+            final View view, final EditText editText, final String path, final int position) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.renameDialogTitle));
+        builder.setView(view);
+        builder.setNegativeButton(getResources().getString(R.string.btnCancelDialog), null);
+        builder.setPositiveButton(getResources().getString(R.string.btnOkDialog),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mainController.renameVideo(path, position, editText.getText().toString());
+                updateRecyclerView();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

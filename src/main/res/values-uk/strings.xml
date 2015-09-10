@@ -14,4 +14,10 @@
     <string name="searchTitle">Search</string>
     <string name="foundFiles">Знайдені файли</string>
     <string name="removeFromRecent">видалити</string>
+    <string name="titleOperations">Дії</string>
+    <string name="removeOperation">видалити</string>
+    <string name="renameOperation">перейменувати</string>
+    <string name="renameDialogTitle">Перейменування</string>
+    <string name="btnOkDialog">OK</string>
+    <string name="btnCancelDialog">Скасувати</string>
 </resources>

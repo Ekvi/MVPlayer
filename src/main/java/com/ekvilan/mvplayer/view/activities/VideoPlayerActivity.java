@@ -18,6 +18,7 @@ import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
 import com.ekvilan.mvplayer.controllers.VideoController;
 import com.ekvilan.mvplayer.utils.DurationConverter;
+import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.view.listeners.VideoFinishedListener;
 
 import java.util.concurrent.Executors;
@@ -185,10 +186,10 @@ public class VideoPlayerActivity extends Activity
     public void surfaceCreated(SurfaceHolder holder) {
         if(outsideAppLink != null) {
             videoController.createPlayer(holder, outsideAppLink);
-            setText(tvName, getName(outsideAppLink));
+            setText(tvName, FileProvider.extractName(outsideAppLink));
         } else {
             videoController.createPlayer(holder, mainController.getVideo(position));
-            setText(tvName, getName(mainController.getVideo(position)));
+            setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
             addToRecentVideo(mainController.getVideo(position));
         }
         updateProgressBar();
@@ -266,11 +267,6 @@ public class VideoPlayerActivity extends Activity
         textView.setText(value);
     }
 
-    private String getName(String path) {
-        String[] split = path.split("/");
-        return split[split.length - 1];
-    }
-
     private void startNewVideo(int position) {
         videoController.finish();
         videoController.createPlayer(surfaceHolder, mainController.getVideo(position));
@@ -292,7 +288,7 @@ public class VideoPlayerActivity extends Activity
     private void playPrev() {
         if (position > 0) {
             startNewVideo(--position);
-            setText(tvName, getName(mainController.getVideo(position)));
+            setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
             setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
         }
         startTimer();
@@ -301,7 +297,7 @@ public class VideoPlayerActivity extends Activity
     private void playNext() {
         if(position < mainController.getCurrentVideoLinksSize() - 1) {
             startNewVideo(++position);
-            setText(tvName, getName(mainController.getVideo(position)));
+            setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
             setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
         }
         startTimer();

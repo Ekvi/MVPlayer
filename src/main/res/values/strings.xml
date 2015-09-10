@@ -14,4 +14,10 @@
     <string name="searchTitle">Search</string>
     <string name="foundFiles">Found files</string>
     <string name="removeFromRecent">remove</string>
+    <string name="titleOperations">Operations</string>
+    <string name="removeOperation">remove</string>
+    <string name="renameOperation">rename</string>
+    <string name="renameDialogTitle">Rename file</string>
+    <string name="btnOkDialog">OK</string>
+    <string name="btnCancelDialog">Cancel</string>
 </resources>

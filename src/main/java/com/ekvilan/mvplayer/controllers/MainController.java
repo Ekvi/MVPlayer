@@ -99,4 +99,18 @@ public class MainController {
     public void removeFromRecentVideo(int index) {
         videoLinksProvider.removeFromRecentVideo(index);
     }
+
+    public void removeVideo(String path, int index) {
+        videoLinksProvider.removeFromCurrentVideoLinks(index);
+        videoLinksProvider.removeFromRecentVideo(path);
+        fileProvider.removeFile(path);
+    }
+
+    public void renameVideo(String path, int position, String newName) {
+        String newPath = fileProvider.changeName(path, newName);
+
+        fileProvider.renameFile(path, newName);
+        videoLinksProvider.renameFileInCurrentVideoLinks(position, newPath);
+        videoLinksProvider.renameFileInRecentVideo(path, newPath);
+    }
 }

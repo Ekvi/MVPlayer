@@ -15,14 +15,19 @@ import android.widget.TextView;
 
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.utils.DurationConverter;
+import com.ekvilan.mvplayer.utils.FileProvider;
 
 import java.io.File;
 import java.util.List;
 
 public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int EMPTY_VIEW = 10;
+    public static final int REMOVE_RECENT = 1;
+    public static final int REMOVE = 2;
+    public static final int RENAME= 3;
 
     private int position;
+    private String filePath;
     private boolean isRecent;
 
     private Context context;
@@ -49,12 +54,10 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int position) {
         if(viewHolder instanceof VideoFileViewHolder) {
-            String[] name = videoLinks.get(position).split("/");
-
             final VideoFileViewHolder holder = (VideoFileViewHolder) viewHolder;
-            holder.fileName.setText(name[name.length - 1]);
+            holder.fileName.setText(FileProvider.extractName(videoLinks.get(position)));
 
             Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(videoLinks.get(position),
                     MediaStore.Images.Thumbnails.MINI_KIND);
@@ -68,6 +71,7 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public boolean onLongClick(View v) {
                     setPosition(holder.getAdapterPosition());
+                    setFilePath(videoLinks.get(position));
                     return false;
                 }
             });
@@ -78,8 +82,16 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return position;
     }
 
-    public void setPosition(int position) {
+    private void setPosition(int position) {
         this.position = position;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    private void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     private String calculateFileSize(String uri) {
@@ -129,8 +141,12 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle(context.getResources().getString(R.string.titleOperations));
             if(isRecent) {
-                menu.add(0, 1, 0, context.getResources().getString(R.string.removeFromRecent));
+                menu.add(0, REMOVE_RECENT, 0, context.getResources().getString(R.string.removeFromRecent));
+            } else {
+                menu.add(0, REMOVE, 0, context.getResources().getString(R.string.removeOperation));
+                menu.add(0, RENAME, 0, context.getResources().getString(R.string.renameOperation));
             }
         }
     }

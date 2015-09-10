@@ -49,9 +49,9 @@ public class VideoLinksProviderUnitTest {
         List<String> result = videoLinksProvider.findVideo("test");
 
         assertEquals(6, result.size());
-        assertTrue(videoLinksProvider.splitVideo(result.get(0)).startsWith("test"));
-        assertTrue(videoLinksProvider.splitVideo(result.get(1)).startsWith("test"));
-        assertTrue(videoLinksProvider.splitVideo(result.get(3)).contains("test"));
+        assertTrue(FileProvider.extractName(result.get(0)).startsWith("test"));
+        assertTrue(FileProvider.extractName(result.get(1)).startsWith("test"));
+        assertTrue(FileProvider.extractName(result.get(3)).contains("test"));
     }
 
     private void saveVideo() {

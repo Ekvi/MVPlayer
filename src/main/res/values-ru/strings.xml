@@ -14,4 +14,10 @@
     <string name="searchTitle">Search</string>
     <string name="foundFiles">Найденные файлы</string>
     <string name="removeFromRecent">удалить</string>
+    <string name="titleOperations">Действия</string>
+    <string name="removeOperation">удалить</string>
+    <string name="renameOperation">переименовать</string>
+    <string name="renameDialogTitle">Переименование</string>
+    <string name="btnOkDialog">OK</string>
+    <string name="btnCancelDialog">Отмена</string>
 </resources>

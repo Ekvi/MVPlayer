@@ -98,4 +98,37 @@ public class FileProvider {
             return videoLinks;
         }
     }
+
+    public void removeFile(String path) {
+        File file = new File(path);
+        if(file.exists()) {
+            file.delete();
+        }
+    }
+
+    public void renameFile(String path, String newName) {
+        File file = new File(path);
+        if(file.exists()) {
+            file.renameTo(new File(changeName(path, newName)));
+        }
+    }
+
+    public static String extractName(String path) {
+        String[] split = path.split("/");
+        return split[split.length - 1];
+    }
+
+    public String changeName(String path, String newName) {
+        String[] split = path.split("/");
+        split[split.length - 1] = newName;
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(split[0]);
+        for(int i = 1; i < split.length; i++) {
+            builder.append("/").append(split[i]);
+        }
+
+        return builder.toString();
+    }
 }

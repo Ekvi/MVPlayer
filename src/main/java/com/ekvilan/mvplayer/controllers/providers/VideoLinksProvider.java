@@ -1,7 +1,6 @@
 package com.ekvilan.mvplayer.controllers.providers;
 
 
-
 import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.utils.StorageUtils;
 
@@ -116,7 +115,7 @@ public class VideoLinksProvider {
         for(FileProvider.VideoFolder videoFolder : folders) {
             List<String> paths = videoFolder.getVideoLinks();
             for(String path : paths) {
-                String fileName = splitVideo(path).toLowerCase();
+                String fileName = FileProvider.extractName(path).toLowerCase();
                 if(fileName.startsWith(text)) {
                     videos.add(0, path);
                 } else {
@@ -135,12 +134,28 @@ public class VideoLinksProvider {
         return videos;
     }
 
-    String splitVideo(String path) {
-        String[] split = path.split("/");
-        return split[split.length - 1];
-    }
-
     public void removeFromRecentVideo(int index) {
         recentVideo.remove(index);
+    }
+
+    public void removeFromRecentVideo(String path) {
+        recentVideo.remove(path);
+    }
+
+    public void removeFromCurrentVideoLinks(int index) {
+        videoLinks.remove(index);
+    }
+
+    public void renameFileInCurrentVideoLinks(int index, String newPath) {
+        videoLinks.set(index, newPath);
+    }
+
+    public void renameFileInRecentVideo(String path, String newPath) {
+        for(int i = 0; i < recentVideo.size(); i++) {
+            if(recentVideo.get(i).equalsIgnoreCase(path)) {
+                recentVideo.set(i, newPath);
+                break;
+            }
+        }
     }
 }

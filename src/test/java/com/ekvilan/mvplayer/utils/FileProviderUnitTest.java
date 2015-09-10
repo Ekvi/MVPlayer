@@ -82,4 +82,13 @@ public class FileProviderUnitTest {
         assertEquals(1, actual.get(2).getVideoLinks().size());
         assertEquals(1, actual.get(3).getVideoLinks().size());
     }
+
+    @Test
+    public void testChangeName() {
+        String path = "/storage/sdcard1/test/file name.3gp";
+        String newName = "changed name.3gp";
+        String expected = "/storage/sdcard1/test/changed name.3gp";
+
+        assertEquals(expected, fileProvider.changeName(path, newName));
+    }
 }
