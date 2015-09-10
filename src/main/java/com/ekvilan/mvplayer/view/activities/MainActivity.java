@@ -2,6 +2,7 @@ package com.ekvilan.mvplayer.view.activities;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mainController = MainController.getInstance();
+
         loadFromPreferences();
 
         if(mainController.getInternalStorageVideo() == null
