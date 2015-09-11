@@ -113,4 +113,8 @@ public class MainController {
         videoLinksProvider.renameFileInCurrentVideoLinks(position, newPath);
         videoLinksProvider.renameFileInRecentVideo(path, newPath);
     }
+
+    public void cleanRecentVideoList() {
+        videoLinksProvider.cleanRecentVideoList();
+    }
 }

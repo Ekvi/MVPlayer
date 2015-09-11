@@ -158,4 +158,8 @@ public class VideoLinksProvider {
             }
         }
     }
+
+    public void cleanRecentVideoList() {
+        recentVideo.clear();
+    }
 }

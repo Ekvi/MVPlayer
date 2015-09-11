@@ -46,15 +46,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/tvDuration"
+                    android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:paddingTop="5dp"
+                    android:layout_gravity="center_horizontal"
                     android:textSize="16sp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"/>
                 <SeekBar
                     android:id="@+id/progressBar"
                     android:layout_width="0dip"
@@ -65,15 +65,15 @@
                     android:progressDrawable="@drawable/progressbar"
                     android:thumb="@drawable/scrubber_control_normal_holo" />
                 <TextView
-                    android:id="@+id/tvTimer"
+                    android:id="@+id/tvDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:paddingTop="5dp"
-                    android:layout_gravity="center_horizontal"
                     android:textSize="16sp"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white" />
             </LinearLayout>
 
             <RelativeLayout

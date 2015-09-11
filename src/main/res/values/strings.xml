@@ -20,4 +20,5 @@
     <string name="renameDialogTitle">Rename file</string>
     <string name="btnOkDialog">OK</string>
     <string name="btnCancelDialog">Cancel</string>
+    <string name="menuClean">clean</string>
 </resources>

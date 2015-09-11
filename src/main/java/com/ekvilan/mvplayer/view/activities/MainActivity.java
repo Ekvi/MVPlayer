@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
     private void clickInternalStorage() {
         storage = getResources().getString(R.string.sliderInternalMemory);
         isSearch = false;
+        invalidateOptionsMenu();
         setUpFolderList(mainController.getInternalStorageVideo());
         fillPathLayout(mainController.getStoragePath(0), white, black, black);
         setToolBar(false, false, true, View.INVISIBLE);
@@ -178,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
     private void clickSdCardStorage() {
         storage = getResources().getString(R.string.sliderSdCard);
         isSearch = false;
+        invalidateOptionsMenu();
         setUpFolderList(mainController.getSdCardVideo());
         if(mainController.getStorageListSize() > 1) {
             setMemoryPath(mainController.getStoragePath(1));
@@ -190,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
     private void clickRecentVideo() {
         storage = getResources().getString(R.string.sliderRecently);
         isSearch = false;
+        invalidateOptionsMenu();
         showVideoList(0);
         fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
         setToolBar(false, false, true, View.INVISIBLE);
@@ -329,6 +332,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem itemMenu = menu.findItem(R.id.clean);
+        if(storage.equals(getResources().getString(R.string.sliderRecently))) {
+            itemMenu.setVisible(true);
+        } else {
+            itemMenu.setVisible(false);
+        }
         return true;
     }
 
@@ -336,15 +346,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.action_search) {
             setToolBar(true, true, false, View.VISIBLE);
         }
         if(id == android.R.id.home) {
             setToolBar(false, false, true, View.INVISIBLE);
             previousStorage();
+        }
+        if(id == R.id.clean) {
+            mainController.cleanRecentVideoList();
+            updateRecyclerView();
         }
 
         return super.onOptionsItemSelected(item);
