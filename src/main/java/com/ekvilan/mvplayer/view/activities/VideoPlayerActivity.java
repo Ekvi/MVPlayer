@@ -253,6 +253,11 @@ public class VideoPlayerActivity extends Activity
         public void run() {
             progressBar.setMax(videoController.getDuration());
             progressBar.setProgress(videoController.getCurrentPosition());
+
+            int bufferedPercentage = progressBar.getMax()/100 * videoController.getBufferedPercentage();
+            if(bufferedPercentage < progressBar.getMax()) {
+                progressBar.setSecondaryProgress(bufferedPercentage);
+            }
         }
     };
 
@@ -304,7 +309,6 @@ public class VideoPlayerActivity extends Activity
             setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
         }
         startTimer();
-
     }
 
     @Override

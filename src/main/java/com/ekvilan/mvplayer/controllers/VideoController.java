@@ -10,6 +10,8 @@ import com.ekvilan.mvplayer.view.listeners.VideoFinishedListener;
 public class VideoController implements MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
 
+    private int buffedPercentage;
+
     private VideoFinishedListener videoFinishedListener;
 
     public void setVideoFinishedListener(VideoFinishedListener videoFinishedListener) {
@@ -30,6 +32,12 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
                     if(videoFinishedListener != null) {
                         videoFinishedListener.onFinished();
                     }
+                }
+            });
+            mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                @Override
+                public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                    buffedPercentage = percent;
                 }
             });
         }
@@ -84,5 +92,9 @@ public class VideoController implements MediaPlayer.OnPreparedListener {
 
     public void setCurrentPosition(int currentPosition) {
         mediaPlayer.seekTo(currentPosition);
+    }
+
+    public int getBufferedPercentage() {
+        return buffedPercentage;
     }
 }
