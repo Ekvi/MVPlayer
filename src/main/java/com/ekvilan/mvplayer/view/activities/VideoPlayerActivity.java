@@ -296,8 +296,7 @@ public class VideoPlayerActivity extends Activity
     private void playPrev() {
         if (position > 0) {
             startNewVideo(--position);
-            setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
-            setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
+            setUpVideoPlayerView(position);
         }
         startTimer();
     }
@@ -305,10 +304,16 @@ public class VideoPlayerActivity extends Activity
     private void playNext() {
         if(position < mainController.getCurrentVideoLinksSize() - 1) {
             startNewVideo(++position);
-            setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
-            setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
+            setUpVideoPlayerView(position);
         }
         startTimer();
+    }
+
+    private void setUpVideoPlayerView(int position) {
+        setText(tvName, FileProvider.extractName(mainController.getVideo(position)));
+        setText(tvDuration, durationConverter.convertDuration(videoController.getDuration()));
+        setImage(btnPlay, ResourcesCompat
+                .getDrawable(getResources(), R.drawable.ic_media_pause, null));
     }
 
     @Override
