@@ -40,18 +40,20 @@ public class FileProvider {
     private void getFiles(File root, boolean isInternal) {
         File[] files = root.listFiles();
 
-        for(File file : files) {
-            if(file.isDirectory()) {
-                getFiles(file, isInternal);
-            } else {
-                if(file.toString().endsWith(extensions[0]) ||
-                        file.toString().endsWith(extensions[1])) {
-                    VideoInfo videoInfo = new VideoInfo(
-                            file.getName(), file.getAbsolutePath(), file.getParent());
-                    if(isInternal) {
-                        internalStorageVideo.add(videoInfo);
-                    } else {
-                        externalStorageVideo.add(videoInfo);
+        if(files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    getFiles(file, isInternal);
+                } else {
+                    if (file.toString().endsWith(extensions[0]) ||
+                            file.toString().endsWith(extensions[1])) {
+                        VideoInfo videoInfo = new VideoInfo(
+                                file.getName(), file.getAbsolutePath(), file.getParent());
+                        if (isInternal) {
+                            internalStorageVideo.add(videoInfo);
+                        } else {
+                            externalStorageVideo.add(videoInfo);
+                        }
                     }
                 }
             }
