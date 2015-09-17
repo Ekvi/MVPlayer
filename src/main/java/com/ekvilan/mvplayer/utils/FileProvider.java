@@ -47,20 +47,7 @@ public class FileProvider {
                 if (file.isDirectory()) {
                     getFiles(file, isInternal);
                 } else {
-                    String[] split = file.toString().split("\\.");
-                    String ext = "";
-                    if(split.length > 0) {
-                        ext = "." + split[split.length - 1];
-                        if (extensions.contains(ext.toLowerCase())) {
-                            VideoInfo videoInfo = new VideoInfo(
-                                    file.getName(), file.getAbsolutePath(), file.getParent());
-                            if (isInternal) {
-                                internalStorageVideo.add(videoInfo);
-                            } else {
-                                externalStorageVideo.add(videoInfo);
-                            }
-                        }
-                    }
+                    storeToCollection(file, isInternal);
                 }
             }
         }
@@ -138,5 +125,22 @@ public class FileProvider {
         }
 
         return builder.toString();
+    }
+
+    private void storeToCollection(File file, boolean isInternal) {
+        if (extensions.contains(extractExtension(file.toString()))) {
+            VideoInfo videoInfo = new VideoInfo(
+                    file.getName(), file.getAbsolutePath(), file.getParent());
+            if (isInternal) {
+                internalStorageVideo.add(videoInfo);
+            } else {
+                externalStorageVideo.add(videoInfo);
+            }
+        }
+    }
+
+    private String extractExtension(String fileName) {
+        String[] split = fileName.split("\\.");
+        return split.length > 0 ? "." + split[split.length - 1].toLowerCase() : "";
     }
 }
