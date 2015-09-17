@@ -79,8 +79,8 @@ public class VideoPlayerActivity extends Activity
 
         Uri uri = getIntent().getData();
         if (uri != null) {
-            outsideAppLink = uri.toString();
             host = uri.getHost();
+            outsideAppLink = host.isEmpty() ? uri.getPath() : uri.toString();
         }
 
         loadInterstitialAd();

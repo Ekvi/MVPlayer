@@ -5,13 +5,15 @@ import com.ekvilan.mvplayer.models.VideoInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.ekvilan.mvplayer.utils.StorageUtils.StorageInfo;
 
 
 public class FileProvider {
-    private String[] extensions = {".mp4", ".3gp"};
+    private List<String> extensions = Arrays.asList(
+            ".mp4", ".3gp", ".3gpp", ".3gpp2", ".webm", ".avi", ".mkv", "webm");
     private List<VideoInfo> internalStorageVideo = new ArrayList<>();
     private List<VideoInfo> externalStorageVideo = new ArrayList<>();
 
@@ -45,14 +47,18 @@ public class FileProvider {
                 if (file.isDirectory()) {
                     getFiles(file, isInternal);
                 } else {
-                    if (file.toString().endsWith(extensions[0]) ||
-                            file.toString().endsWith(extensions[1])) {
-                        VideoInfo videoInfo = new VideoInfo(
-                                file.getName(), file.getAbsolutePath(), file.getParent());
-                        if (isInternal) {
-                            internalStorageVideo.add(videoInfo);
-                        } else {
-                            externalStorageVideo.add(videoInfo);
+                    String[] split = file.toString().split("\\.");
+                    String ext = "";
+                    if(split.length > 0) {
+                        ext = "." + split[split.length - 1];
+                        if (extensions.contains(ext.toLowerCase())) {
+                            VideoInfo videoInfo = new VideoInfo(
+                                    file.getName(), file.getAbsolutePath(), file.getParent());
+                            if (isInternal) {
+                                internalStorageVideo.add(videoInfo);
+                            } else {
+                                externalStorageVideo.add(videoInfo);
+                            }
                         }
                     }
                 }
