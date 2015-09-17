@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,6 +21,10 @@ import com.ekvilan.mvplayer.controllers.VideoController;
 import com.ekvilan.mvplayer.utils.DurationConverter;
 import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.view.listeners.VideoFinishedListener;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,16 +47,19 @@ public class VideoPlayerActivity extends Activity
     private TextView tvName;
     private TextView tvTimer;
     private TextView tvDuration;
+    private AdView mAdView;
 
     private VideoController videoController;
     private MainController mainController;
     private DurationConverter durationConverter;
     private Handler handler;
     private ScheduledExecutorService scheduledExecutorService;
+    private InterstitialAd interstitialAd;
 
     private int position;
     private boolean isShow = false;
     private String outsideAppLink;
+    private String host = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +78,16 @@ public class VideoPlayerActivity extends Activity
         position = getIntent().getIntExtra(MainActivity.POSITION, 0);
 
         Uri uri = getIntent().getData();
-        if(uri != null) {
+        if (uri != null) {
             outsideAppLink = uri.toString();
+            host = uri.getHost();
         }
 
+        loadInterstitialAd();
         initView();
         initVideoHolder();
         addListeners();
+        createBanner();
     }
 
     private void initView() {
@@ -103,7 +112,7 @@ public class VideoPlayerActivity extends Activity
         surfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isShow) {
+                if (!isShow) {
                     showPanels();
                     isShow = true;
                 }
@@ -129,15 +138,17 @@ public class VideoPlayerActivity extends Activity
             @Override
             public void onClick(View v) {
                 Drawable drawable;
-                if(videoController.isPlaying()) {
+                if (videoController.isPlaying()) {
                     videoController.pause();
                     drawable = ResourcesCompat
                             .getDrawable(getResources(), R.drawable.ic_media_play, null);
+                    mAdView.setVisibility(View.VISIBLE);
                 } else {
                     videoController.play();
                     drawable = ResourcesCompat
                             .getDrawable(getResources(), R.drawable.ic_media_pause, null);
                     startTimer();
+                    mAdView.setVisibility(View.INVISIBLE);
                 }
                 setImage(btnPlay, drawable);
             }
@@ -165,7 +176,7 @@ public class VideoPlayerActivity extends Activity
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(outsideAppLink == null) {
+                if (outsideAppLink == null) {
                     playPrev();
                 }
             }
@@ -174,9 +185,16 @@ public class VideoPlayerActivity extends Activity
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(outsideAppLink == null) {
+                if (outsideAppLink == null) {
                     playNext();
                 }
+            }
+        });
+
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
             }
         });
     }
@@ -188,7 +206,7 @@ public class VideoPlayerActivity extends Activity
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if(outsideAppLink != null) {
+        if (outsideAppLink != null) {
             videoController.createPlayer(holder, outsideAppLink);
             setText(tvName, FileProvider.extractName(outsideAppLink));
         } else {
@@ -225,7 +243,7 @@ public class VideoPlayerActivity extends Activity
 
     private Runnable hide = new Runnable() {
         public void run() {
-            if(videoController.isPlaying()) {
+            if (videoController.isPlaying()) {
                 hidePanels();
                 isShow = false;
             }
@@ -236,18 +254,20 @@ public class VideoPlayerActivity extends Activity
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
         scheduledExecutorService.scheduleWithFixedDelay(
-                new Runnable(){
+                new Runnable() {
                     @Override
                     public void run() {
                         handler.post(progressUpdater);
-                    }}, 200, 200, TimeUnit.MILLISECONDS);
+                    }
+                }, 200, 200, TimeUnit.MILLISECONDS);
 
         scheduledExecutorService.scheduleWithFixedDelay(
-                new Runnable(){
+                new Runnable() {
                     @Override
                     public void run() {
                         handler.post(timerUpdater);
-                    }}, 1000, 1000, TimeUnit.MILLISECONDS);
+                    }
+                }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
     private Runnable progressUpdater = new Runnable() {
@@ -255,8 +275,8 @@ public class VideoPlayerActivity extends Activity
             progressBar.setMax(videoController.getDuration());
             progressBar.setProgress(videoController.getCurrentPosition());
 
-            int bufferedPercentage = progressBar.getMax()/100 * videoController.getBufferedPercentage();
-            if(bufferedPercentage < progressBar.getMax()) {
+            int bufferedPercentage = progressBar.getMax() / 100 * videoController.getBufferedPercentage();
+            if (bufferedPercentage < progressBar.getMax()) {
                 progressBar.setSecondaryProgress(bufferedPercentage);
             }
         }
@@ -303,7 +323,7 @@ public class VideoPlayerActivity extends Activity
     }
 
     private void playNext() {
-        if(position < mainController.getCurrentVideoLinksSize() - 1) {
+        if (position < mainController.getCurrentVideoLinksSize() - 1) {
             startNewVideo(++position);
             setUpVideoPlayerView(position);
         }
@@ -326,7 +346,33 @@ public class VideoPlayerActivity extends Activity
             }
             playNext();
         } else {
+            if (!host.isEmpty()) {
+                showInterstitialAd();
+            }
             finish();
         }
+    }
+
+    private void loadInterstitialAd() {
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getResources().getString(R.string.interstitialAd_id));
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        interstitialAd.loadAd(adRequest);
+    }
+
+    private void showInterstitialAd() {
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
+        }
+    }
+
+    private void createBanner() {
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 }

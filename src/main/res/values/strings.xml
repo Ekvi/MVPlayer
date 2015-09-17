@@ -21,4 +21,6 @@
     <string name="btnOkDialog">OK</string>
     <string name="btnCancelDialog">Cancel</string>
     <string name="menuClean">clean</string>
+    <string name="interstitialAd_id"></string>
+    <string name="banner_ad_unit_id"></string>
 </resources>
