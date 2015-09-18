@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                                 || mainController.getSdCardVideo() == null) {
             mainController.cacheVideoLinks();
         }
+        mainController.validateRecentVideo();
 
         black = getResources().getColor(R.color.black);
         white = getResources().getColor(R.color.white);

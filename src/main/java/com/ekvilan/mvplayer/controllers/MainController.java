@@ -117,4 +117,8 @@ public class MainController {
     public void cleanRecentVideoList() {
         videoLinksProvider.cleanRecentVideoList();
     }
+
+    public void validateRecentVideo() {
+        videoLinksProvider.validateRecentVideo();
+    }
 }

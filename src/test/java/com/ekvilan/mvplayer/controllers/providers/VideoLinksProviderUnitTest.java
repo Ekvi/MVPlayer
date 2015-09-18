@@ -54,6 +54,23 @@ public class VideoLinksProviderUnitTest {
         assertTrue(FileProvider.extractName(result.get(3)).contains("test"));
     }
 
+    @Test
+    public void testValidateRecentVideo() {
+        saveVideo();
+        saveRecentVideo();
+
+        assertEquals(5, videoLinksProvider.getRecentVideo().size());
+
+        videoLinksProvider.validateRecentVideo();
+
+        List<String> recentVideo = videoLinksProvider.getRecentVideo();
+        assertEquals(4, recentVideo.size());
+        assertTrue(recentVideo.get(0).endsWith("VID_20120921_232121.3gp"));
+        assertTrue(recentVideo.get(1).endsWith("test.3gp"));
+        assertTrue(recentVideo.get(2).endsWith("camera test.3gp"));
+        assertTrue(recentVideo.get(3).endsWith("inside test camera.3gp"));
+    }
+
     private void saveVideo() {
         List<FileProvider.VideoFolder> sdCard = new ArrayList<>();
         List<String> sdFiles = new ArrayList<>();
@@ -74,5 +91,16 @@ public class VideoLinksProviderUnitTest {
 
         videoLinksProvider.saveExternalStorageVideo(sdCard);
         videoLinksProvider.saveInternalStorageVideo(internalStorage);
+    }
+
+    private void saveRecentVideo() {
+        List<String> recentVideo = new ArrayList<>();
+        recentVideo.add("/storage/sdcard1/DCIM/Camera/VID_20120921_232121.3gp");
+        recentVideo.add("/storage/sdcard1/DCIM/Camera/test.3gp");
+        recentVideo.add("/storage/sdcard1/DCIM/Camera/camera test.3gp");
+        recentVideo.add("/storage/sdcard0/movies/removed video.mp4");
+        recentVideo.add("/storage/sdcard1/DCIM/Camera/inside test camera.3gp");
+
+        videoLinksProvider.saveRecentVideo(recentVideo);
     }
 }

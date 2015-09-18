@@ -5,6 +5,7 @@ import com.ekvilan.mvplayer.utils.FileProvider;
 import com.ekvilan.mvplayer.utils.StorageUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class VideoLinksProvider {
@@ -161,5 +162,25 @@ public class VideoLinksProvider {
 
     public void cleanRecentVideoList() {
         recentVideo.clear();
+    }
+
+    public void validateRecentVideo() {
+        Iterator<String> iterator = recentVideo.iterator();
+        while(iterator.hasNext()) {
+            String fileName = iterator.next();
+            if(!isStorageContains(internalStorageVideo, fileName)
+                    && !isStorageContains(sdCardVideo, fileName)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private boolean isStorageContains(List<FileProvider.VideoFolder> folders, String fileName) {
+        for(FileProvider.VideoFolder folder : folders) {
+            if(folder.contains(fileName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -92,6 +92,10 @@ public class FileProvider {
         public List<String> getVideoLinks() {
             return videoLinks;
         }
+
+        public boolean contains(String name) {
+            return videoLinks.contains(name);
+        }
     }
 
     public void removeFile(String path) {
