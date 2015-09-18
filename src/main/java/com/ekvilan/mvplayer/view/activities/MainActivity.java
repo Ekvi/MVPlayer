@@ -201,18 +201,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void showVideoList(int position) {
         if(storage.equals(getResources().getString(R.string.sliderInternalMemory))) {
-            setUpVideoFileList(mainController.getInternalVideoFolder(position));
+            VideoFolder folder = mainController.getInternalVideoFolder(position);
+            setUpVideoFileList(folder);
             fillPathLayout(mainController.getStoragePath(0), white, black, black);
-            getSupportActionBar().setTitle(FileProvider.extractName(
-                    mainController.getInternalVideoFolder(position).getFolderName()));
+            getSupportActionBar().setTitle(FileProvider.extractName(folder.getFolderName()));
         } else if (storage.equals(getResources().getString(R.string.sliderSdCard))) {
-            setUpVideoFileList(mainController.getSdCardFolder(position));
+            VideoFolder folder = mainController.getSdCardFolder(position);
+            setUpVideoFileList(folder);
             if(mainController.getStorageListSize() > 1) {
                 setMemoryPath(mainController.getStoragePath(1));
             }
             setStorageTextColor(black, white, black);
-            getSupportActionBar().setTitle(FileProvider.extractName(
-                    mainController.getInternalVideoFolder(position).getFolderName()));
+            getSupportActionBar().setTitle(FileProvider.extractName(folder.getFolderName()));
         } else {
             setUpRecentVideoFileList(mainController.getRecentVideo());
             fillPathLayout(getResources().getString(R.string.memPathRecentVideo), black, black, white);
