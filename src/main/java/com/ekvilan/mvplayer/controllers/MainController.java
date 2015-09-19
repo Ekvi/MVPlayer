@@ -100,8 +100,9 @@ public class MainController {
         videoLinksProvider.removeFromRecentVideo(index);
     }
 
-    public void removeVideo(String path, int index) {
+    public void removeVideo(String path, int index, String storage, String sdCard) {
         videoLinksProvider.removeFromCurrentVideoLinks(index);
+        videoLinksProvider.removeFromStorage(path, storage, sdCard);
         videoLinksProvider.removeFromRecentVideo(path);
         fileProvider.removeFile(path);
     }

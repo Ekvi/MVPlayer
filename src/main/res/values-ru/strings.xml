@@ -21,6 +21,6 @@
     <string name="btnOkDialog">OK</string>
     <string name="btnCancelDialog">Отмена</string>
     <string name="menuClean">clean</string>
-    <string name="interstitialAd_id">ca-app-pub-4637654147607031/6404526100</string>
-    <string name="banner_ad_unit_id">ca-app-pub-4637654147607031/1715144500</string>
+    <string name="interstitialAd_id"></string>
+    <string name="banner_ad_unit_id"></string>
 </resources>

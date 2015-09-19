@@ -111,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpVideoFileList(VideoFolder videoFolder) {
-        videoFileAdapter = new VideoFileAdapter(this, videoFolder.getVideoLinks(), isRecent());
+        videoFileAdapter = new VideoFileAdapter(
+                this, videoFolder.getVideoLinks(), isRecent(), isSearch);
         isFolderList = false;
         mainController.cacheCurrentVideoLinks(videoFolder.getVideoLinks());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -280,8 +281,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showVideo(List<String> videos) {
-        videoFileAdapter = new VideoFileAdapter(this, videos, isRecent());
-
+        videoFileAdapter = new VideoFileAdapter(this, videos, isRecent(), isSearch);
         isFolderList = false;
         mainController.cacheCurrentVideoLinks(videos);
 
@@ -289,7 +289,8 @@ public class MainActivity extends AppCompatActivity {
         if(videos!= null && !videos.isEmpty()) {
             recyclerView.setAdapter(videoFileAdapter);
         } else {
-            recyclerView.setAdapter(new VideoFileAdapter(this, Collections.EMPTY_LIST, isRecent()));
+            recyclerView.setAdapter(
+                    new VideoFileAdapter(this, Collections.EMPTY_LIST, isRecent(), isSearch));
         }
     }
 
@@ -373,9 +374,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpFoundVideo(List<String> foundVideos) {
+        isSearch = true;
         fillPathLayout(getResources().getString(R.string.memFoundVideo), black, black, black);
         showVideo(foundVideos);
-        isSearch = true;
     }
 
     private void setToolBar(boolean isHomeBtnEnabled, boolean isDisplayHomeAsUpEnabled,
@@ -433,7 +434,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void removeFromFileSystem(String path, int position) {
         if(position != -1) {
-            mainController.removeVideo(path, position);
+            mainController.removeVideo(
+                    path, position, storage, getResources().getString(R.string.sliderSdCard));
             updateRecyclerView();
         }
     }

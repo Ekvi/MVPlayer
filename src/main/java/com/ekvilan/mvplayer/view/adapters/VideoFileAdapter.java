@@ -29,18 +29,20 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int position;
     private String filePath;
     private boolean isRecent;
+    private boolean isSearch;
 
     private Context context;
     private DurationConverter durationConverter;
     private LayoutInflater inflater;
     private List<String> videoLinks;
 
-    public VideoFileAdapter(Context context, List<String> videoLinks, boolean isRecent) {
+    public VideoFileAdapter(Context context, List<String> videoLinks, boolean isRecent, boolean isSearch) {
         inflater = LayoutInflater.from(context);
         durationConverter = new DurationConverter();
         this.context = context;
         this.videoLinks = videoLinks;
         this.isRecent = isRecent;
+        this.isSearch = isSearch;
     }
 
     @Override
@@ -141,12 +143,14 @@ public class VideoFileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.setHeaderTitle(context.getResources().getString(R.string.titleOperations));
-            if(isRecent) {
-                menu.add(0, REMOVE_RECENT, 0, context.getResources().getString(R.string.removeFromRecent));
-            } else {
-                menu.add(0, REMOVE, 0, context.getResources().getString(R.string.removeOperation));
-                menu.add(0, RENAME, 0, context.getResources().getString(R.string.renameOperation));
+            if(!isSearch) {
+                menu.setHeaderTitle(context.getResources().getString(R.string.titleOperations));
+                if (isRecent) {
+                    menu.add(0, REMOVE_RECENT, 0, context.getResources().getString(R.string.removeFromRecent));
+                } else {
+                    menu.add(0, REMOVE, 0, context.getResources().getString(R.string.removeOperation));
+                    menu.add(0, RENAME, 0, context.getResources().getString(R.string.renameOperation));
+                }
             }
         }
     }

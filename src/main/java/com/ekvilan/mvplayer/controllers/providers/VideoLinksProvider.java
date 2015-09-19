@@ -147,6 +147,32 @@ public class VideoLinksProvider {
         videoLinks.remove(index);
     }
 
+    public void removeFromStorage(String path, String storage, String sdCard) {
+        if (storage.equals(sdCard)) {
+            removeFromStorage(sdCardVideo, path);
+        } else {
+            removeFromStorage(internalStorageVideo, path);
+        }
+    }
+
+    private void removeFromStorage(List<FileProvider.VideoFolder> storage, String path) {
+        Iterator<FileProvider.VideoFolder> folderIterator = storage.iterator();
+        while(folderIterator.hasNext()) {
+            FileProvider.VideoFolder folder = folderIterator.next();
+            List<String> videos = folder.getVideoLinks();
+            Iterator<String> videoIterator = videos.iterator();
+            while(videoIterator.hasNext()) {
+                String video = videoIterator.next();
+                if(path.equals(video)) {
+                    videoIterator.remove();
+                }
+            }
+            if(folder.getVideoLinks().isEmpty()) {
+                folderIterator.remove();
+            }
+        }
+    }
+
     public void renameFileInCurrentVideoLinks(int index, String newPath) {
         videoLinks.set(index, newPath);
     }

@@ -7,9 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class VideoLinksProviderUnitTest {
     private VideoLinksProvider videoLinksProvider;
@@ -71,6 +73,26 @@ public class VideoLinksProviderUnitTest {
         assertTrue(recentVideo.get(3).endsWith("inside test camera.3gp"));
     }
 
+    @Test
+    public void testRemoveFromStorageLastVideoInFolder() {
+        saveVideo();
+
+        String removeVideo = "/storage/sdcard1/REMOVED/removed file.mp4";
+        String storage = "sd card";
+        String sdCard = "sd card";
+
+        assertEquals(2, videoLinksProvider.getSdCardVideo().size());
+        assertEquals("folder1", videoLinksProvider.getSdCardVideo().get(0).getFolderName());
+        assertEquals("REMOVED", videoLinksProvider.getSdCardVideo().get(1).getFolderName());
+
+        videoLinksProvider.removeFromStorage(removeVideo, storage, sdCard);
+
+        List<FileProvider.VideoFolder> sdCardStorage = videoLinksProvider.getSdCardVideo();
+
+        assertEquals(1, sdCardStorage.size());
+        assertEquals("folder1", sdCardStorage.get(0).getFolderName());
+    }
+
     private void saveVideo() {
         List<FileProvider.VideoFolder> sdCard = new ArrayList<>();
         List<String> sdFiles = new ArrayList<>();
@@ -78,7 +100,12 @@ public class VideoLinksProviderUnitTest {
         sdFiles.add("/storage/sdcard1/DCIM/Camera/test.3gp");
         sdFiles.add("/storage/sdcard1/DCIM/Camera/camera test.3gp");
         sdFiles.add("/storage/sdcard1/DCIM/Camera/inside test camera.3gp");
+
+        List<String> sdFiles2 = new ArrayList<>();
+        sdFiles2.add("/storage/sdcard1/REMOVED/removed file.mp4");
+
         sdCard.add(new FileProvider.VideoFolder("folder1", sdFiles));
+        sdCard.add(new FileProvider.VideoFolder("REMOVED", sdFiles2));
 
         List<FileProvider.VideoFolder> internalStorage = new ArrayList<>();
         List<String> internalFiles = new ArrayList<>();
