@@ -21,6 +21,7 @@
     <string name="btnOkDialog">OK</string>
     <string name="btnCancelDialog">Скасувати</string>
     <string name="menuClean">clean</string>
+    <string name="deleteMessage">Видео файл успішно видалено</string>
     <string name="interstitialAd_id"></string>
     <string name="banner_ad_unit_id"></string>
 </resources>

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ekvilan.mvplayer.R;
 import com.ekvilan.mvplayer.controllers.MainController;
@@ -412,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case VideoFileAdapter.REMOVE:
                 removeFromFileSystem(videoFileAdapter.getFilePath(), position);
+                Toast.makeText(this, "video file was deleted", Toast.LENGTH_SHORT).show();
                 break;
             case VideoFileAdapter.RENAME:
                 renameVideoFile(videoFileAdapter.getFilePath(), position);

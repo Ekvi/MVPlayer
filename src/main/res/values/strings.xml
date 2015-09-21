@@ -15,12 +15,13 @@
     <string name="foundFiles">Found files</string>
     <string name="removeFromRecent">remove</string>
     <string name="titleOperations">Operations</string>
-    <string name="removeOperation">remove</string>
+    <string name="removeOperation">delete</string>
     <string name="renameOperation">rename</string>
     <string name="renameDialogTitle">Rename file</string>
     <string name="btnOkDialog">OK</string>
     <string name="btnCancelDialog">Cancel</string>
     <string name="menuClean">clean</string>
+    <string name="deleteMessage">Video file has been successfully removed</string>
     <string name="interstitialAd_id"></string>
     <string name="banner_ad_unit_id"></string>
 </resources>

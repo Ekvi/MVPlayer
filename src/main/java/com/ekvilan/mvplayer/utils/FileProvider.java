@@ -13,7 +13,7 @@ import static com.ekvilan.mvplayer.utils.StorageUtils.StorageInfo;
 
 public class FileProvider {
     private List<String> extensions = Arrays.asList(
-            ".mp4", ".3gp", ".3gpp", ".3gpp2", ".webm", ".avi", ".mkv", "webm");
+            ".mp4", ".3gp", ".3gpp", ".3gpp2", ".webm", ".avi", ".mkv");
     private List<VideoInfo> internalStorageVideo = new ArrayList<>();
     private List<VideoInfo> externalStorageVideo = new ArrayList<>();
 
