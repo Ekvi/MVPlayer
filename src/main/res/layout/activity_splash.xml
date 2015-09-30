@@ -2,6 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_background"
-    tools:context="com.ekvilan.mvplayer.SplashActivity">
+    tools:context="com.ekvilan.mvplayer.view.activities.SplashActivity">
 
 </RelativeLayout>

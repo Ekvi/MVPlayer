@@ -1,11 +1,11 @@
-package com.ekvilan.mvplayer;
+package com.ekvilan.mvplayer.view.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
 
-import com.ekvilan.mvplayer.view.activities.MainActivity;
+import com.ekvilan.mvplayer.R;
 
 
 public class SplashActivity extends Activity {
